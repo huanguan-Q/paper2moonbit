@@ -18,20 +18,37 @@ jobs:
         run: moon version
       - name: Regression (check + test) across all projects
         run: |
+          FAILED=""
           for p in projects/*/; do
             if [ -f "$p/moon.mod" ]; then
-              echo "::group::$(basename "$p")"
-              (cd "$p" && moon check) || exit 1
+              name="$(basename "$p")"
+              echo "::group::$name"
+              (cd "$p" && moon check >"/tmp/chk_$name.log" 2>&1) && chk=PASS || chk=FAIL
               # lifeguard-mbt is native-only by declared dependency constraints
               # (moonbitlang/async native-stub); moon.pkg declares supported_targets
-              if [ "$(basename "$p")" = "lifeguard-mbt" ]; then
-                (cd "$p" && moon test --target native) || exit 1
+              if [ "$name" = "lifeguard-mbt" ]; then
+                (cd "$p" && moon test --target native >"/tmp/tst_$name.log" 2>&1) && tst=PASS || tst=FAIL
               else
-                (cd "$p" && moon test) || exit 1
+                (cd "$p" && moon test >"/tmp/tst_$name.log" 2>&1) && tst=PASS || tst=FAIL
               fi
+              echo "$name: check=$chk test=$tst"
+              [ "$chk" = "FAIL" ] && FAILED="$FAILED $name"
+              [ "$tst" = "FAIL" ] && FAILED="$FAILED $name"
               echo "::endgroup::"
             fi
           done
+          echo "FAILED PROJECTS:$FAILED" | tee /tmp/failed_projects.txt
+          if [ -n "$FAILED" ]; then exit 1; fi
+      - name: Upload regression logs
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: regression-logs
+          path: |
+            /tmp/chk_*.log
+            /tmp/tst_*.log
+            /tmp/failed_projects.txt
+          if-no-files-found: ignore
   backend-matrix:
     runs-on: ubuntu-latest
     strategy:
