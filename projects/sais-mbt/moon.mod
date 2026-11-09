@@ -11,11 +11,11 @@
 
 name = "huanguan-Q/sais"
 
-version = "0.2.0"
+version = "0.2.1"
 
 readme = "README.mbt.md"
 
-repository = ""
+repository = "github.com/huanguan-Q/paper2moonbit"
 
 license = "Apache-2.0"
 
