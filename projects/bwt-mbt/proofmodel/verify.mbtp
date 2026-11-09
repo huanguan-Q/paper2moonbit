@@ -1,0 +1,43 @@
+// FORMAL lemmas for the BWT inverse transform (Alg. D / §4.2).
+// The C array is built as exclusive prefix sums of per-symbol counts; these
+// lemmas capture the bucket-boundary invariants that keep T[i] inside its
+// bucket, in pure linear integer arithmetic (LIA).
+//
+// Pre-registered degradation: rotation-ordering and permutation properties
+// need arrays — covered at RUNTIME test level (T-BWT-RT), per knowledge base.
+
+///|
+/// Bucket boundary invariant of the §4.2 prefix-sum pass: with per-symbol
+/// counts c0,c1,c2 summing to n and exclusive-start offsets s1,s2, the last
+/// bucket ends exactly at n.
+predicate bucket_chain(c0 : Int, c1 : Int, c2 : Int, n : Int, s1 : Int, s2 : Int) {
+  s1 == c0 && s2 == (c0 + c1) && (c0 + c1 + c2) == n
+}
+
+///|
+lemma bucket_partition(c0 : Int, c1 : Int, c2 : Int, n : Int, s1 : Int, s2 : Int) where {
+  proof_require: bucket_chain(c0, c1, c2, n, s1, s2),
+  proof_ensure: (s2 + c2) == n,
+} {
+}
+
+///|
+/// T[i] = P[i] + C[L[i]] stays inside its bucket: the rank P[i] is bounded
+/// by the symbol count, so the offset lands within [c_pre, c_pre + cnt).
+predicate rank_bounded(p : Int, cnt : Int) {
+  p >= 0 && p < cnt
+}
+
+///|
+lemma t_index_lower(p : Int, cnt : Int, c_pre : Int) where {
+  proof_require: rank_bounded(p, cnt),
+  proof_ensure: (c_pre + p) >= c_pre,
+} {
+}
+
+///|
+lemma t_index_upper(p : Int, cnt : Int, c_pre : Int) where {
+  proof_require: rank_bounded(p, cnt),
+  proof_ensure: (c_pre + p) < (c_pre + cnt),
+} {
+}

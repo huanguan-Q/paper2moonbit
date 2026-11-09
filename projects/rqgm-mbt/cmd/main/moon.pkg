@@ -1,0 +1,5 @@
+// import {
+//   "huanguan-Q/rqgm" @lib,
+// }
+
+pkgtype(kind: "executable")

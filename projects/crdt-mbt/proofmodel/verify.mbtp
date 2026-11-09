@@ -1,0 +1,39 @@
+// Probe 2: disjunction-free max characterization via the polynomial identity
+// (m - a) * (m - b) == 0 — "m equals a or b" without any boolean `||`.
+
+///|
+predicate is_max(a : Int, b : Int, m : Int) {
+  m >= a && m >= b && (m - a) * (m - b) == 0
+}
+
+///|
+lemma max_comm(a : Int, b : Int, m : Int) where {
+  proof_require: is_max(a, b, m),
+  proof_ensure: is_max(b, a, m),
+} {
+}
+
+///|
+lemma max_idem(a : Int, m : Int) where {
+  proof_require: is_max(a, a, m),
+  proof_ensure: m == a,
+} {
+}
+
+///|
+lemma max_assoc(
+  a : Int,
+  b : Int,
+  c : Int,
+  m1 : Int,
+  r1 : Int,
+  m2 : Int,
+  r2 : Int,
+) where {
+  proof_require: is_max(a, b, m1),
+  proof_require: is_max(m1, c, r1),
+  proof_require: is_max(b, c, m2),
+  proof_require: is_max(a, m2, r2),
+  proof_ensure: r1 == r2,
+} {
+}

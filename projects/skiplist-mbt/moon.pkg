@@ -1,5 +1,1 @@
-// import {
-//   "huanguan-Q/skiplist" @lib,
-// }
-
-pkgtype(kind: "executable")
+proof_enabled = true

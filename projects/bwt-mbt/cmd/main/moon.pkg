@@ -1,0 +1,5 @@
+// import {
+//   "huanguan-Q/bwt" @lib,
+// }
+
+pkgtype(kind: "executable")
