@@ -13,6 +13,13 @@ PROJECTS=(
   "projects/skiplist-mbt"
   "projects/crdt-mbt"
   "projects/bwt-mbt"
+  "projects/roaring-mbt"
+  "projects/eliasfano-mbt"
+  "projects/hyperloglog-mbt"
+  "projects/xor16filter"
+  "projects/ziplex-mbt"
+  "projects/lifeguard-mbt"
+  "projects/rqgm-mbt"
 )
 TARGETS=(wasm wasm-gc js native)
 printf "%-24s" "PROJECT"
