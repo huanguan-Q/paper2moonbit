@@ -1,0 +1,49 @@
+name: regression
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+jobs:
+  check-test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install MoonBit toolchain
+        run: |
+          curl -fsSL https://cli.moonbitlang.com/install/unix.sh | bash
+          echo "$HOME/.moon/bin" >> "$GITHUB_PATH"
+      - name: Toolchain version
+        run: moon version
+      - name: Regression (check + test, wasm) across all projects
+        run: |
+          for p in projects/*/; do
+            if [ -f "$p/moon.mod" ]; then
+              echo "::group::$(basename "$p")"
+              (cd "$p" && moon check) || exit 1
+              (cd "$p" && moon test) || exit 1
+              echo "::endgroup::"
+            fi
+          done
+  backend-matrix:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        target: [wasm, wasm-gc, js, native]
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install MoonBit toolchain
+        run: |
+          curl -fsSL https://cli.moonbitlang.com/install/unix.sh | bash
+          echo "$HOME/.moon/bin" >> "$GITHUB_PATH"
+      - name: Differential test matrix (target: ${{ matrix.target }})
+        run: |
+          for p in projects/chacha-mbt projects/cms-mbt projects/loglog-mbt \
+                   projects/chash-mbt projects/sais-mbt projects/codel-mbt \
+                   projects/fpcomp-mbt projects/skiplist-mbt projects/crdt-mbt \
+                   projects/bwt-mbt; do
+            echo "::group::$(basename "$p") (${{ matrix.target }})"
+            (cd "$p" && moon test --target "${{ matrix.target }}") || exit 1
+            echo "::endgroup::"
+          done
