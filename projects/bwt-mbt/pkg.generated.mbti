@@ -1,0 +1,47 @@
+// Generated using `moon info`, DON'T EDIT IT
+package "huanguan-Q/bwt"
+
+// Values
+pub fn build_cp(Array[Int32]) -> (Array[Int32], Array[Int32])
+
+pub fn build_t(Array[Int32], Array[Int32], Array[Int32]) -> Array[Int32]
+
+pub fn bwt_compress(Array[Int32]) -> BwtPacket
+
+pub fn bwt_decompress(BwtPacket) -> Array[Int32]
+
+pub fn bwt_forward(Array[Int32]) -> (Array[Int32], Int32)
+
+pub fn bwt_forward_starts(Array[Int32]) -> Array[Int32]
+
+pub fn bwt_inverse(Array[Int32], Int32) -> Array[Int32]
+
+pub fn codes_str(Array[Int32]) -> String
+
+pub fn compare_rotations(Array[Int32], Int32, Int32) -> Int32
+
+pub fn mtf_decode(Array[Int32]) -> Array[Int32]
+
+pub fn mtf_decode_small(Array[Int32], Array[Int32]) -> Array[Int32]
+
+pub fn mtf_encode(Array[Int32]) -> Array[Int32]
+
+pub fn mtf_encode_small(Array[Int32], Array[Int32]) -> Array[Int32]
+
+pub fn str_codes(String) -> Array[Int32]
+
+pub fn zero_run_decode(Array[Int32]) -> Array[Int32]
+
+pub fn zero_run_encode(Array[Int32]) -> Array[Int32]
+
+// Errors
+
+// Types and methods
+pub struct BwtPacket {
+  i : Int32
+  zr : Array[Int32]
+}
+
+// Type aliases
+
+// Traits

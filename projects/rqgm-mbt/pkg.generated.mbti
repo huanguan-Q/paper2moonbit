@@ -1,0 +1,102 @@
+// Generated using `moon info`, DON'T EDIT IT
+package "huanguan-Q/rqgm"
+
+// Values
+pub fn best_belief(Double, Int32, Int32) -> Double
+
+pub fn betacf(Int32, Int32, Double) -> Double
+
+pub fn betainc(Int32, Int32, Double) -> Double
+
+pub fn checkpoints(Double, Int32, Int32) -> Array[Int32]
+
+pub fn log_fact(Int32) -> Double
+
+pub fn next_checkpoint(Double, Int32, Int32, Int32) -> Int32
+
+pub fn power(Double, Int32) -> Double
+
+pub fn sample_beta(LCG, Int32, Int32) -> Double
+
+pub fn uniform_checkpoints(Int32, Int32) -> Array[Int32]
+
+// Errors
+
+// Types and methods
+pub struct Archive {
+  nodes : Array[ArchiveNode]
+  succ : Array[Int32]
+  fail : Array[Int32]
+  // private fields
+}
+pub fn Archive::add_node(Self, Int32) -> Int32
+pub fn Archive::add_record(Self, Int32, Array[(Int32, Int32)], Int32) -> Unit
+pub fn Archive::clade(Self, Int32) -> Array[Int32]
+pub fn Archive::clade_counts(Self, Int32) -> (Int32, Int32)
+pub fn Archive::cmp_score(Self, Int32) -> Double
+pub fn Archive::erase_slot(Self, Int32, Int32) -> Int32
+pub fn Archive::new() -> Self
+pub fn Archive::recompute(Self) -> Unit
+
+pub struct ArchiveNode {
+  id : Int32
+  parent : Int32
+}
+
+pub struct Harness {
+  archive : Archive
+  cfg : HarnessConfig
+  epochs : Array[Int32]
+  eval_acc : Array[Double]
+  anchor_succ : Array[Int32]
+  anchor_fail : Array[Int32]
+  rng : LCG
+  mut n_evals : Int32
+  node_role_cnt : Array[Array[Int32]]
+  node_task_cnt : Array[Array[Int32]]
+  mut reprocessed : Int32
+  mut replacements : Int32
+  hidden : Array[Double]
+  mut endpoint : Int32
+}
+pub fn Harness::checkpoint(Self) -> Unit
+pub fn Harness::edit_stub(Self, Int32) -> Int32
+pub fn Harness::epochs_of(Self, Int32) -> Int32
+pub fn Harness::expand_gate(Self) -> Bool
+pub fn Harness::grow_counters(Self, Int32) -> Unit
+pub fn Harness::least_cell(Self, Int32) -> (Int32, Int32)
+pub fn Harness::new(HarnessConfig) -> Self
+pub fn Harness::replacement_rule(Self, Int32, Array[(Int32, Int32)]) -> Bool
+pub fn Harness::run(HarnessConfig) -> Self
+pub fn Harness::sample_node_cmp(Self) -> Int32
+pub fn Harness::select_endpoint(Self) -> Int32
+pub fn Harness::set_anchor_counts(Self, Int32, Int32, Int32) -> Unit
+pub fn Harness::train_stub(Self, Int32, Int32) -> Unit
+pub fn Harness::val_eval(Self, Int32, Int32, Int32) -> Unit
+
+pub struct HarnessConfig {
+  budget : Int32
+  alpha : Double
+  eps : Double
+  rho : Double
+  h : Int32
+  seed : UInt64
+}
+pub fn HarnessConfig::new(budget~ : Int32, alpha~ : Double, eps~ : Double, rho~ : Double, h~ : Int32, seed~ : UInt64) -> Self
+
+pub struct LCG {
+  // private fields
+}
+pub fn LCG::new(UInt64) -> Self
+pub fn LCG::next_double(Self) -> Double
+pub fn LCG::next_u64(Self) -> UInt64
+
+pub struct Record {
+  node : Int32
+  dep : Array[(Int32, Int32)]
+  outcome : Int32
+}
+
+// Type aliases
+
+// Traits

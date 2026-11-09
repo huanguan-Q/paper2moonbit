@@ -1,0 +1,23 @@
+// Logic side: bits modeled as mathematical integers.
+// Machine-word bitwise ops are not lowered to the proof surface (verified
+// 2026-11-03: >>, <<, &, |, ^ all rejected in contracted/pure bodies), so the
+// Elias-Fano reassembly invariant is proved over its mathematical model:
+// with b = 2^l, upper = x / b, lower = x % b  ->  upper * b + lower == x.
+
+///|
+/// Core div/mod reassembly identity underlying Elias-Fano encode/decode.
+lemma div_mod_reassembly(x : Int, b : Int) where {
+  proof_require: x >= 0,
+  proof_require: b > 0,
+  proof_ensure: (x / b) * b + x % b == x,
+} {
+}
+
+///|
+/// Bounds companion: the lower field never exceeds the mask width.
+lemma div_mod_bounds(x : Int, b : Int) where {
+  proof_require: x >= 0,
+  proof_require: b > 0,
+  proof_ensure: x % b < b,
+} {
+}

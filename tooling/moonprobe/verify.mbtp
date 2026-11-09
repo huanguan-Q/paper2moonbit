@@ -1,0 +1,16 @@
+// .mbtp path probes (were: lambda unsupported, && unsupported)
+lemma mbtp_and_hi(v : Int, r : Int) where {
+  proof_require: v >= 0,
+  proof_require: r >= 0,
+  proof_require: r <= 10,
+  proof_ensure: r <= 10,
+} {
+}
+
+// div monotonicity on the .mbtp path (was: timeout)
+lemma div_monotone(c1 : Int, c2 : Int) where {
+  proof_require: c1 >= 1,
+  proof_require: c2 > c1,
+  proof_ensure: 100000 / c2 <= 100000 / c1,
+} {
+}

@@ -1,6 +1,9 @@
+options("proof-enabled": true)
+
 import {
-  "huanguan-Q/hyperloglog",
-  "moonbitlang/core/hashmap",
+  "moonbitlang/core/math",
 }
 
-pkgtype(kind: "executable")
+import {
+  "moonbitlang/core/hashmap",
+} for "test"

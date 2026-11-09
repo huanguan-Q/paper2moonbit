@@ -1,5 +1,0 @@
-import {
-  "huanguan-Q/xor16filter",
-}
-
-pkgtype(kind: "executable")

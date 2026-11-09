@@ -1,0 +1,33 @@
+// Generated using `moon info`, DON'T EDIT IT
+package "huanguan-Q/xor16filter"
+
+import {
+  "moonbitlang/core/ref",
+}
+
+// Values
+pub fn build(Array[UInt64]) -> Result[Xor16, String]
+
+pub fn low32(UInt64) -> UInt64
+
+pub fn murmur64(UInt64) -> UInt64
+
+pub fn reduce(UInt64, Int32) -> Int32
+
+pub fn rotl64(UInt64, Int32) -> UInt64
+
+pub fn splitmix64_next(@ref.Ref[UInt64]) -> UInt64
+
+// Errors
+
+// Types and methods
+pub(all) struct Xor16 {
+  seed : UInt64
+  block_length : Int32
+  fingerprints : FixedArray[UInt64]
+}
+pub fn Xor16::contains(Self, UInt64) -> Bool
+
+// Type aliases
+
+// Traits

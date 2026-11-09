@@ -1,0 +1,43 @@
+// Generated using `moon info`, DON'T EDIT IT
+package "huanguan-Q/chash"
+
+// Values
+pub fn bucket_point(UInt64, Int32, Int32) -> Int32
+
+pub fn distance(Int32, Int32) -> Int32
+
+pub fn item_point(UInt64, Int32) -> Int32
+
+pub fn mix64(UInt64, UInt64) -> UInt64
+
+pub fn scale_point(UInt64) -> Int32
+
+// Errors
+
+// Types and methods
+pub struct LCG {
+  // private fields
+}
+pub fn LCG::new(UInt64) -> Self
+pub fn LCG::next_u64(Self) -> UInt64
+
+pub struct PointEntry {
+  point : Int32
+  bucket : Int32
+}
+
+pub struct RangedHash {
+  seed : UInt64
+  points_per_bucket : Int32
+  // private fields
+}
+pub fn RangedHash::add_bucket(Self, Int32) -> Unit
+pub fn RangedHash::add_next_bucket(Self) -> Int32
+pub fn RangedHash::assign(Self, Int32) -> Int32
+pub fn RangedHash::has_bucket(Self, Int32) -> Bool
+pub fn RangedHash::new(seed~ : UInt64, points_per_bucket~ : Int32) -> Self
+pub fn RangedHash::remove_bucket(Self, Int32) -> Bool
+
+// Type aliases
+
+// Traits

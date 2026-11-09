@@ -1,0 +1,55 @@
+// Generated using `moon info`, DON'T EDIT IT
+package "huanguan-Q/loglog"
+
+// Values
+pub fn bucket_of(UInt64, Int32) -> Int32
+
+pub fn cap_reg(Int32) -> Int32
+
+pub fn mix64(UInt64, Int32) -> UInt64
+
+pub fn payload_of(UInt64, Int32) -> UInt64
+
+pub fn rho(UInt64) -> Int32
+
+// Errors
+
+// Types and methods
+pub struct HLL {
+  k : Int32
+  seed : UInt64
+  regs : PackedRegs
+}
+pub fn HLL::add(Self, Int32) -> Unit
+pub fn HLL::estimate(Self) -> Double
+pub fn HLL::new(k~ : Int32, seed~ : UInt64) -> Self
+pub fn HLL::register_bytes(Self) -> Int32
+pub fn HLL::register_count(Self) -> Int32
+
+pub struct LogLog {
+  k : Int32
+  seed : UInt64
+  regs : PackedRegs
+}
+pub fn LogLog::add(Self, Int32) -> Unit
+pub fn LogLog::estimate(Self) -> Double
+pub fn LogLog::merge(Self, Self) -> Unit
+pub fn LogLog::new(k~ : Int32, seed~ : UInt64) -> Self
+pub fn LogLog::raw_register(Self, Int32) -> Int32
+pub fn LogLog::register_bytes(Self) -> Int32
+pub fn LogLog::register_count(Self) -> Int32
+pub fn LogLog::superloglog_estimate(Self) -> Double
+
+pub struct PackedRegs {
+  m : Int32
+  bits : Int32
+  words : FixedArray[UInt64]
+}
+pub fn PackedRegs::byte_size(Self) -> Int32
+pub fn PackedRegs::get(Self, Int32) -> Int32
+pub fn PackedRegs::new(Int32, Int32) -> Self
+pub fn PackedRegs::put(Self, Int32, Int32) -> Unit
+
+// Type aliases
+
+// Traits

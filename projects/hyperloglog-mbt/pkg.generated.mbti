@@ -1,0 +1,25 @@
+// Generated using `moon info`, DON'T EDIT IT
+package "huanguan-Q/hyperloglog"
+
+// Values
+pub fn register_of(Int32, Int32) -> Int32
+
+pub fn rho(Int32, Int32) -> Int32
+
+pub fn update_reg(Int32, Int32, Int32) -> Int32
+
+// Errors
+
+// Types and methods
+pub struct HLL {
+  // private fields
+}
+pub fn HLL::add(Self, UInt64) -> Unit
+pub fn HLL::count(Self) -> Double
+pub fn HLL::new(Int32) -> Self
+pub fn HLL::num_registers(Self) -> Int32
+pub fn HLL::register_value(Self, Int32) -> Int32
+
+// Type aliases
+
+// Traits

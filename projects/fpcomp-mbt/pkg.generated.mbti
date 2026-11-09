@@ -1,0 +1,34 @@
+// Generated using `moon info`, DON'T EDIT IT
+package "huanguan-Q/fpcomp"
+
+// Values
+pub fn fast_two_sum(Double, Double) -> TwoSumResult
+
+pub fn is_finite(Double) -> Bool
+
+pub fn kahan_sum(Double, Array[Double]) -> Double
+
+pub fn naive_sum(Double, Array[Double]) -> Double
+
+pub fn sterbenz_sub(Double, Double) -> Double
+
+pub fn two_sum(Double, Double) -> TwoSumResult
+
+// Errors
+
+// Types and methods
+pub struct LCG {
+  // private fields
+}
+pub fn LCG::new(UInt64) -> Self
+pub fn LCG::next_double(Self) -> Double
+pub fn LCG::next_u64(Self) -> UInt64
+
+pub struct TwoSumResult {
+  s : Double
+  e : Double
+}
+
+// Type aliases
+
+// Traits

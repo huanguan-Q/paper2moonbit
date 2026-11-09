@@ -1,0 +1,21 @@
+// Generated using `moon info`, DON'T EDIT IT
+package "huanguan-Q/eliasfano"
+
+// Values
+pub fn build(Array[UInt64]) -> Result[EliasFano, String]
+
+pub fn build_ok(Array[UInt64]) -> EliasFano
+
+// Errors
+
+// Types and methods
+type EliasFano
+pub fn EliasFano::get(Self, Int32) -> UInt64
+pub fn EliasFano::length(Self) -> Int32
+pub fn EliasFano::lower_bits(Self) -> Int32
+pub fn EliasFano::next_ge(Self, UInt64) -> UInt64?
+pub fn EliasFano::total_bits(Self) -> Int32
+
+// Type aliases
+
+// Traits

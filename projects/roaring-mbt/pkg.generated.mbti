@@ -1,0 +1,19 @@
+// Generated using `moon info`, DON'T EDIT IT
+package "huanguan-Q/roaring"
+
+// Values
+
+// Errors
+
+// Types and methods
+pub struct Roaring {
+  // private fields
+}
+pub fn Roaring::add(Self, UInt32) -> Unit
+pub fn Roaring::contains(Self, UInt32) -> Bool
+pub fn Roaring::new() -> Self
+pub fn Roaring::remove(Self, UInt32) -> Unit
+
+// Type aliases
+
+// Traits

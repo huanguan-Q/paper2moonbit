@@ -1,0 +1,66 @@
+// Generated using `moon info`, DON'T EDIT IT
+package "huanguan-Q/crdt"
+
+// Values
+
+// Errors
+
+// Types and methods
+pub struct GCounter {
+  // private fields
+}
+pub fn GCounter::increment(Self, Int32) -> Unit
+pub fn GCounter::leq(Self, Self) -> Bool
+pub fn GCounter::merge(Self, Self) -> Unit
+pub fn GCounter::new(Int32) -> Self
+pub fn GCounter::size(Self) -> Int32
+pub fn GCounter::value(Self) -> Int32
+
+pub struct GSet {
+  // private fields
+}
+pub fn GSet::add(Self, String) -> Unit
+pub fn GSet::lookup(Self, String) -> Bool
+pub fn GSet::merge(Self, Self) -> Unit
+pub fn GSet::new() -> Self
+
+pub struct LWWReg {
+  // private fields
+}
+pub fn LWWReg::assign(Self, Int32, Int32) -> Unit
+pub fn LWWReg::merge(Self, Self) -> Unit
+pub fn LWWReg::new() -> Self
+pub fn LWWReg::timestamp(Self) -> Int32
+pub fn LWWReg::value(Self) -> Int32
+
+pub struct ORSet {
+  // private fields
+}
+pub fn ORSet::add(Self, String) -> Unit
+pub fn ORSet::lookup(Self, String) -> Bool
+pub fn ORSet::merge(Self, Self) -> Unit
+pub fn ORSet::new(Int32) -> Self
+pub fn ORSet::remove(Self, String) -> Unit
+
+pub struct PNCounter {
+  // private fields
+}
+pub fn PNCounter::decrement(Self, Int32) -> Unit
+pub fn PNCounter::increment(Self, Int32) -> Unit
+pub fn PNCounter::merge(Self, Self) -> Unit
+pub fn PNCounter::new(Int32) -> Self
+pub fn PNCounter::value(Self) -> Int32
+
+pub struct TwoPSet {
+  // private fields
+}
+pub fn TwoPSet::add(Self, String) -> Unit
+pub fn TwoPSet::can_remove(Self, String) -> Bool
+pub fn TwoPSet::lookup(Self, String) -> Bool
+pub fn TwoPSet::merge(Self, Self) -> Unit
+pub fn TwoPSet::new() -> Self
+pub fn TwoPSet::remove(Self, String) -> Unit
+
+// Type aliases
+
+// Traits

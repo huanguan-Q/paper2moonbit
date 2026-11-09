@@ -1,0 +1,57 @@
+// Generated using `moon info`, DON'T EDIT IT
+package "huanguan-Q/ziplex"
+
+import {
+  "moonbitlang/core/debug",
+}
+
+// Values
+pub fn alt(Array[Regex]) -> Regex
+
+pub fn chars(String) -> Regex
+
+pub fn concat(Regex, Regex) -> Regex
+
+pub fn lex(Array[Rule], String) -> Result[Array[Token], String]
+
+pub fn plus(Regex) -> Regex
+
+pub fn print(Array[Token]) -> String
+
+pub fn range(Char, Char) -> Regex
+
+pub fn str(String) -> Regex
+
+// Errors
+
+// Types and methods
+#derive(Eq, Hash, @debug.Debug)
+pub enum Regex {
+  REmpty
+  REps
+  RChar(Char)
+  RRange(Char, Char)
+  RUnion(Array[Regex])
+  RConcat(Regex, Regex)
+  RStar(Regex)
+}
+pub fn Regex::equal(Self, Self) -> Bool
+pub fn Regex::hash(Self) -> Int32
+pub fn Regex::hash_combine(Self, Hasher) -> Unit
+pub fn Regex::not_equal(Self, Self) -> Bool
+pub fn Regex::to_repr(Self) -> @debug.Repr
+
+pub struct Rule {
+  name : String
+  re : Regex
+}
+pub fn Rule::new(String, Regex) -> Self
+
+pub struct Token {
+  rule : String
+  lexeme : String
+}
+
+// Type aliases
+
+// Traits

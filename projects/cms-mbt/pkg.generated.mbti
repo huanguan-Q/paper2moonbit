@@ -1,0 +1,42 @@
+// Generated using `moon info`, DON'T EDIT IT
+package "huanguan-Q/cms"
+
+// Values
+pub fn mix64(UInt64, Int32, Int32) -> UInt64
+
+pub fn row_index(UInt64, Int32, Int32, Int32) -> Int32
+
+pub fn scale_index(UInt64, Int32) -> Int32
+
+pub fn zipf_stream(LCG, Double, Int32, Int32) -> Array[Int32]
+
+// Errors
+
+// Types and methods
+pub struct CMS {
+  w : Int32
+  d : Int32
+  seed : UInt64
+  counts : Array[Array[Int32]]
+}
+pub fn CMS::conservative_update(Self, Int32, Int32) -> Unit
+pub fn CMS::depth(Self) -> Int32
+pub fn CMS::inner_product(Self, Self) -> Int32
+pub fn CMS::new(w~ : Int32, d~ : Int32, seed~ : UInt64) -> Self
+pub fn CMS::point_query(Self, Int32) -> Int32
+pub fn CMS::range_query(Self, Int32, Int32) -> Int32
+pub fn CMS::row_sum(Self, Int32) -> Int32
+pub fn CMS::update(Self, Int32, Int32) -> Unit
+pub fn CMS::width(Self) -> Int32
+pub fn CMS::with_params(eps~ : Double, delta~ : Double, seed~ : UInt64) -> Self
+
+pub struct LCG {
+  // private fields
+}
+pub fn LCG::new(UInt64) -> Self
+pub fn LCG::next_double(Self) -> Double
+pub fn LCG::next_u64(Self) -> UInt64
+
+// Type aliases
+
+// Traits

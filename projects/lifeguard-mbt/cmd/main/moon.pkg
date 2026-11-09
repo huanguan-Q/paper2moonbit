@@ -1,0 +1,6 @@
+import {
+  "huanguan-Q/lifeguard",
+  "moonbitlang/async",
+}
+
+pkgtype(kind: "executable")

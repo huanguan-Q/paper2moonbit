@@ -1,0 +1,56 @@
+// Generated using `moon info`, DON'T EDIT IT
+package "huanguan-Q/codel"
+
+// Values
+pub fn control_law(Int32, Int32) -> Int32
+
+// Errors
+
+// Types and methods
+pub struct CodelQueue {
+  // private fields
+}
+pub fn CodelQueue::bytes(Self) -> Int32
+pub fn CodelQueue::count(Self) -> Int32
+pub fn CodelQueue::dequeue(Self, Int32) -> Packet?
+pub fn CodelQueue::dodequeue(Self, Int32) -> DodequeueResult
+pub fn CodelQueue::drop_next(Self) -> Int32
+pub fn CodelQueue::dropping(Self) -> Bool
+pub fn CodelQueue::enqueue(Self, Int32, Int32) -> Unit
+pub fn CodelQueue::first_above_time(Self) -> Int32
+pub fn CodelQueue::new() -> Self
+pub fn CodelQueue::queue_len(Self) -> Int32
+
+pub struct DodequeueResult {
+  p : Packet?
+  ok_to_drop : Bool
+}
+
+pub struct NetSim {
+  send_time : Int32
+  rtt : Int32
+  codel : CodelQueue
+  // private fields
+}
+pub fn NetSim::new(send_time~ : Int32, rtt~ : Int32) -> Self
+pub fn NetSim::run(Self, duration~ : Int32) -> SimResult
+
+pub struct Packet {
+  tstamp : Int32
+  size : Int32
+}
+
+pub struct SimResult {
+  sojourn_min_log : Array[(Int32, Int32)]
+  sent_total : Int32
+  drops : Int32
+  duration : Int32
+  steady_start : Int32
+}
+pub fn SimResult::drops(Self) -> Int32
+pub fn SimResult::min_sojourn_steady(Self) -> Int32
+pub fn SimResult::utilization_steady(Self) -> Double
+
+// Type aliases
+
+// Traits

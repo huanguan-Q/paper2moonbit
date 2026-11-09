@@ -1,0 +1,47 @@
+// Generated using `moon info`, DON'T EDIT IT
+package "huanguan-Q/skiplist"
+
+// Values
+pub fn cap_level(Int32, Int32) -> Int32
+
+pub fn random_level(LCG, Double, Int32) -> Int32
+
+// Errors
+
+// Types and methods
+pub struct LCG {
+  // private fields
+}
+pub fn LCG::new(UInt64) -> Self
+pub fn LCG::next_double(Self) -> Double
+pub fn LCG::next_u64(Self) -> UInt64
+
+pub struct Node {
+  id : Int32
+  key : Int32
+  forward : Array[Node]
+  // private fields
+}
+
+pub struct SkipList {
+  header : Node
+  nil_node : Node
+  p : Double
+  max_level : Int32
+  rng : LCG
+  // private fields
+}
+pub fn SkipList::check_invariants(Self) -> Bool
+pub fn SkipList::current_level(Self) -> Int32
+pub fn SkipList::delete(Self, Int32) -> Bool
+pub fn SkipList::get(Self, Int32) -> Int32
+pub fn SkipList::insert(Self, Int32, Int32) -> Unit
+pub fn SkipList::last_comparisons(Self) -> Int32
+pub fn SkipList::new(Int32, p? : Double, seed? : UInt64) -> Self
+pub fn SkipList::search(Self, Int32) -> Bool
+pub fn SkipList::size(Self) -> Int32
+pub fn SkipList::to_level1_keys(Self) -> Array[Int32]
+
+// Type aliases
+
+// Traits
