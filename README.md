@@ -74,6 +74,10 @@ moon prove proofmodel                  # 形式化契约
 - [`docs/METHODOLOGY.md`](docs/METHODOLOGY.md) — 七阶段流水线与判据哲学详解
 - [`docs/EVOLUTION.md`](docs/EVOLUTION.md) — 21 轮演进史：失败、诊断与配方沉淀
 - [`docs/COMPLIANCE.md`](docs/COMPLIANCE.md) — 合规三查与逐包出处表
+- [`docs/BACKEND_MATRIX.md`](docs/BACKEND_MATRIX.md) — 四后端差分测试矩阵（10 项目全一致）
+- [`docs/ROADMAP.md`](docs/ROADMAP.md) — 路线图
+- [`docs/APPLICATION.md`](docs/APPLICATION.md) — 赛事申报书
+- [`tooling/moonprobe/`](tooling/moonprobe/) — 证明器能力边界探针（升级后一键复检）
 - [`skill/`](skill/) — 可分发的 Agent Skill（SKILL.md + 知识库 + 回归脚本）
 
 ## License
