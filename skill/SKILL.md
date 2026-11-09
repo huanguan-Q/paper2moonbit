@@ -15,6 +15,8 @@ metadata:
 
 **适用**：算法/数据结构/解析器/编译器/协议类论文（纯逻辑，无重型依赖）。已实测通过的论文类型（moon 0.1.20261104 下全量回归验证；**领域清单的单一权威定义在 references/moonbit-context.md 按轮次章节**，此处为摘要）：位图数据结构（Roaring）、压缩编码（Elias-Fano）、概率估计（HyperLogLog）、过滤器（Xor16）、词法引擎（ZipLex）、成员协议（Lifeguard/SWIM）、分布式协作数据结构（CRDT）、搜索调度 harness + 数值统计核心（RQGM：Thompson 采样/逆不完全 Beta，LLM 组件 stub 化）、文本压缩管线（BWT：字符串变换/自适应编码）、概率性数据结构/有序字典（Skip List：几何分布层数 + oracle 序列测试）、分布式系统算法（一致性哈希：ranged hash family + 单调性/平衡/平滑性判据）、概要数据结构（Count-Min Sketch：单侧误差/行和守恒/ε·N 窗口判据）、基数估计家族对比（LogLog/SuperLogLog：位打包寄存器 + 多种子误差序与分散度判据）、浮点补偿算术（Goldberg 1991：FastTwoSum/Kahan，Double 域 FORMAL 不可用定论）、系统工程类（CoDel/RFC 8289：环境 stub 化降级路线验证）。
 
+**开源化**：12 个包已发布 mooncakes.io（huanguan-Q/{cms,loglog,xor16filter,roaring,eliasfano,hyperloglog,ziplex,lifeguard,codel,chacha,chash,sais}）；四后端差分矩阵全一致（10 项目 × wasm/wasm-gc/js/native）。
+
 **回归套件**：`scripts/regress.sh`——15 个实例项目（moon check/test/prove 矩阵）的一键全量回归。工具链升级后必跑：`sh regress.sh <workspace>`。项目清单注意：多轮共用容器目录（xor16-mbt/ 下 6 个独立 moon 项目），顶层另有 9 个——**以目录清单为准，勿按轮数计**。首跑（moon 0.1.20261102）与升级复跑（moon 0.1.20261104）均 ALL GREEN；脚本内不得用 `rm -rf` 清证明缓存（会触发 safe-delete 拦截造成假阳性 FAIL）。
 **不适用**：需要 PyTorch/numpy 重型训练生态的 ML 复现类论文——MoonBit 科学计算生态尚不成熟。遇到此类论文，明确告知用户局限，建议降级为「只实现核心算法模块」。
 
