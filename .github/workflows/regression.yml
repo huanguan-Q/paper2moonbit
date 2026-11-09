@@ -16,13 +16,19 @@ jobs:
           echo "$HOME/.moon/bin" >> "$GITHUB_PATH"
       - name: Toolchain version
         run: moon version
-      - name: Regression (check + test, wasm) across all projects
+      - name: Regression (check + test) across all projects
         run: |
           for p in projects/*/; do
             if [ -f "$p/moon.mod" ]; then
               echo "::group::$(basename "$p")"
               (cd "$p" && moon check) || exit 1
-              (cd "$p" && moon test) || exit 1
+              # lifeguard-mbt is native-only by declared dependency constraints
+              # (moonbitlang/async native-stub); moon.pkg declares supported_targets
+              if [ "$(basename "$p")" = "lifeguard-mbt" ]; then
+                (cd "$p" && moon test --target native) || exit 1
+              else
+                (cd "$p" && moon test) || exit 1
+              fi
               echo "::endgroup::"
             fi
           done
@@ -42,7 +48,9 @@ jobs:
           for p in projects/chacha-mbt projects/cms-mbt projects/loglog-mbt \
                    projects/chash-mbt projects/sais-mbt projects/codel-mbt \
                    projects/fpcomp-mbt projects/skiplist-mbt projects/crdt-mbt \
-                   projects/bwt-mbt; do
+                   projects/bwt-mbt projects/roaring-mbt projects/eliasfano-mbt \
+                   projects/hyperloglog-mbt projects/xor16filter projects/ziplex-mbt \
+                   projects/rqgm-mbt; do
             echo "::group::$(basename "$p") (${{ matrix.target }})"
             (cd "$p" && moon test --target "${{ matrix.target }}") || exit 1
             echo "::endgroup::"
