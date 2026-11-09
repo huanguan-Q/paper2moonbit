@@ -1,0 +1,6 @@
+import {
+  "huanguan-Q/hyperloglog",
+  "moonbitlang/core/hashmap",
+}
+
+pkgtype(kind: "executable")

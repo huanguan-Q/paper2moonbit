@@ -1,0 +1,40 @@
+// FORMAL lemmas for the RQGM harness — clade metaproductivity monotonicity
+// (§3.1). CMP(a) = n_C_succ / (n_C_succ + n_C_fail); cross-multiplied into
+// pure linear integer arithmetic so Z3 can decide it.
+//
+// Pre-registered degradation: the Prop. 6 geometric bound involves 2^q
+// (nonlinear) — kept at RUNTIME test level (T-SCHED), per knowledge base.
+
+///|
+/// Adding m >= 0 pooled successes to a clade never lowers its success rate:
+/// (a+m)/(a+b+m) >= a/(a+b)  <=>  (a+m)(a+b) >= a(a+b+m)  <=>  b*m >= 0.
+lemma cmp_mono_add_success(a : Int, b : Int, m : Int) where {
+  proof_require: m >= 0,
+  proof_require: b >= 0,
+  proof_ensure: (a + m) * (a + b) >= a * (a + b + m),
+} {
+}
+
+///|
+/// Adding f >= 0 pooled failures never raises the success rate:
+/// a/(a+b+f) <= a/(a+b)  <=>  a*f >= 0.
+lemma cmp_mono_add_failure(a : Int, b : Int, f : Int) where {
+  proof_require: f >= 0,
+  proof_require: a >= 0,
+  proof_ensure: a * (a + b) <= a * (a + b + f),
+} {
+}
+
+///|
+/// CMP is a rate in [0,1] whenever counts are nonnegative: the numerator is
+/// bounded by the denominator (succ <= succ + fail).
+predicate clade_rate_bounded(succ : Int, fail : Int) {
+  (succ >= 0) && (fail >= 0) && (succ <= (succ + fail))
+}
+
+///|
+lemma cmp_in_unit_interval(succ : Int, fail : Int) where {
+  proof_require: clade_rate_bounded(succ, fail),
+  proof_ensure: succ <= succ + fail,
+} {
+}

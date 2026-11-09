@@ -1,0 +1,5 @@
+import {
+  "huanguan-Q/ziplex" @ziplex,
+}
+
+pkgtype(kind: "executable")

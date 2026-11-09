@@ -1,0 +1,5 @@
+// import {
+//   "huanguan-Q/crdt" @lib,
+// }
+
+pkgtype(kind: "executable")

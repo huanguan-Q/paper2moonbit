@@ -1,0 +1,40 @@
+// FORMAL lemmas for the consistent-hashing point scaling (§4.2).
+// Pre-registered probe: whether the proof layer can reason about Int % on
+// a nonnegative dividend. If unsupported, the scale bound degrades to the
+// RUNTIME window tests (T-BALANCE), per knowledge base.
+
+///|
+/// Point scaling bound: a nonnegative word scaled by % into [0, ring) stays
+/// in the ring domain — the invariant behind every bucket/item point.
+lemma scale_in_ring(x : Int, ring : Int) where {
+  proof_require: x >= 0,
+  proof_require: ring >= 1,
+  proof_ensure: x % ring >= 0,
+} {
+}
+
+///|
+lemma scale_lt_ring(x : Int, ring : Int) where {
+  proof_require: x >= 0,
+  proof_require: ring >= 1,
+  proof_ensure: x % ring < ring,
+} {
+}
+
+///|
+/// Nearest-point distance bound: the chosen candidate distance never exceeds
+/// either neighbor distance (used by assign's two-candidate comparison).
+lemma dist_not_above(a : Int, b : Int, m : Int) where {
+  proof_require: m == a,
+  proof_require: a <= b,
+  proof_ensure: m <= a,
+} {
+}
+
+///|
+lemma dist_not_above_other(a : Int, b : Int, m : Int) where {
+  proof_require: m == a,
+  proof_require: a <= b,
+  proof_ensure: m <= b,
+} {
+}

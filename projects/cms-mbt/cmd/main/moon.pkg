@@ -1,0 +1,5 @@
+// import {
+//   "huanguan-Q/cms" @lib,
+// }
+
+pkgtype(kind: "executable")

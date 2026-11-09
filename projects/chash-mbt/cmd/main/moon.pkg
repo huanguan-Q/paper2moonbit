@@ -1,0 +1,5 @@
+// import {
+//   "huanguan-Q/chash" @lib,
+// }
+
+pkgtype(kind: "executable")

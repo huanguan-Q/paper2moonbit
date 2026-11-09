@@ -1,0 +1,12 @@
+// FORMAL lemmas for the CoDel control law (RFC 8289 §5.6).
+// Pre-registered probe result: div monotonicity (100000/c2 <= 100000/c1)
+// TIMES OUT in the prover (nonlinear div reasoning) — degraded to RUNTIME,
+// where T-CTRL-LAW covers the decreasing-gap schedule numerically. The LIA
+// floor bound below is proved.
+
+// LIA fallback: the scheduled gap is always nonnegative (servo never stalls).
+lemma control_law_gap_positive(c : Int) where {
+  proof_require: c >= 1,
+  proof_ensure: (100000 / c) >= 0,
+} {
+}

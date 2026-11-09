@@ -1,0 +1,5 @@
+// import {
+//   "huanguan-Q/sais" @lib,
+// }
+
+pkgtype(kind: "executable")

@@ -1,0 +1,6 @@
+# Audit archives (local only, auto-expire after 90 days)
+.audits/
+# Eco record (local statistics)
+.ecoeconomy/
+# Validator registry (local integrity data)
+scripts/.custom-validator-registry.json

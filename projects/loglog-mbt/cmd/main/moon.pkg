@@ -1,0 +1,5 @@
+// import {
+//   "huanguan-Q/loglog" @lib,
+// }
+
+pkgtype(kind: "executable")

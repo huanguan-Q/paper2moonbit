@@ -1,0 +1,5 @@
+// import {
+//   "huanguan-Q/fpcomp" @lib,
+// }
+
+pkgtype(kind: "executable")

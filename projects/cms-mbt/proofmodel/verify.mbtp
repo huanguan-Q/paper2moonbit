@@ -1,0 +1,20 @@
+// FORMAL lemmas for the CMS row indexing (§3 hash scaling).
+// The row hash scales a mixed word into [0, w); these capture the bounds
+// that keep every counter access inside its row (mod reasoning, first
+// confirmed provable in round 11).
+
+///|
+lemma scale_in_ring(x : Int, w : Int) where {
+  proof_require: x >= 0,
+  proof_require: w >= 1,
+  proof_ensure: x % w >= 0,
+} {
+}
+
+///|
+lemma scale_lt_width(x : Int, w : Int) where {
+  proof_require: x >= 0,
+  proof_require: w >= 1,
+  proof_ensure: x % w < w,
+} {
+}
