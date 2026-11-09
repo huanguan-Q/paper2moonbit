@@ -43,7 +43,7 @@ jobs:
         run: |
           curl -fsSL https://cli.moonbitlang.com/install/unix.sh | bash
           echo "$HOME/.moon/bin" >> "$GITHUB_PATH"
-      - name: Differential test matrix (target: ${{ matrix.target }})
+      - name: Differential test matrix (target ${{ matrix.target }})
         run: |
           for p in projects/chacha-mbt projects/cms-mbt projects/loglog-mbt \
                    projects/chash-mbt projects/sais-mbt projects/codel-mbt \
