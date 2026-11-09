@@ -15,12 +15,12 @@ version = "0.1.0"
 
 readme = "README.mbt.md"
 
-repository = ""
+repository = "github.com/huanguan-Q/paper2moonbit"
 
 license = "Apache-2.0"
 
-keywords = [ ]
+keywords = [ "skiplist", "data-structures", "probabilistic" ]
 
 preferred_target = "wasm"
 
-description = ""
+description = "Skip List with geometric level distribution and invariant checks (Pugh, CACM 1990)."

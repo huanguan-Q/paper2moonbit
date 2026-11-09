@@ -15,12 +15,12 @@ version = "0.1.0"
 
 readme = "README.mbt.md"
 
-repository = ""
+repository = "github.com/huanguan-Q/paper2moonbit"
 
 license = "Apache-2.0"
 
-keywords = [ ]
+keywords = [ "bwt", "compression", "strings" ]
 
 preferred_target = "wasm"
 
-description = ""
+description = "Burrows-Wheeler Transform pipeline: BWT/MTF/zero-run encoding with end-to-end round-trip (Burrows & Wheeler, SRC-RR-124)."

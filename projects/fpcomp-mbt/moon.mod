@@ -15,12 +15,12 @@ version = "0.1.0"
 
 readme = "README.mbt.md"
 
-repository = ""
+repository = "github.com/huanguan-Q/paper2moonbit"
 
 license = "Apache-2.0"
 
-keywords = [ ]
+keywords = [ "floating-point", "kahan", "compensated-summation" ]
 
 preferred_target = "wasm"
 
-description = ""
+description = "Floating-point compensated arithmetic: FastTwoSum/TwoSum/Sterbenz/Kahan (Goldberg, 1991) with extreme-scale judgments."

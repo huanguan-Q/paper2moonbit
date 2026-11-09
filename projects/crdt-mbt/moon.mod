@@ -15,12 +15,12 @@ version = "0.1.0"
 
 readme = "README.mbt.md"
 
-repository = ""
+repository = "github.com/huanguan-Q/paper2moonbit"
 
 license = "Apache-2.0"
 
-keywords = [ ]
+keywords = [ "crdt", "distributed", "collaborative" ]
 
 preferred_target = "wasm"
 
-description = ""
+description = "CRDT merge semantics with commutativity/associativity judgments for collaborative editing."

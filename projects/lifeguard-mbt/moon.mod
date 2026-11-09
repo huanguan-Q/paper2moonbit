@@ -1,21 +1,30 @@
-name = "moonbitlang/async_examples"
+// Learn more about moon.mod configuration:
+// https://docs.moonbitlang.com/en/latest/toolchain/moon/module.html
+//
+// To add a dependency, run this command in your terminal:
+//   moon add moonbitlang/x
+//
+// Or manually declare it in `import`, for example:
+// import {
+//   "moonbitlang/x@0.4.6",
+// }
 
-version = "0.3.0"
+name = "huanguan-Q/lifeguard"
 
-import {
-  "moonbitlang/async@0.0.0",
-}
+version = "0.1.0"
 
-readme = "README.md"
+readme = "README.mbt.md"
 
-repository = "https://github.com/moonbitlang/async"
+repository = "github.com/huanguan-Q/paper2moonbit"
 
 license = "Apache-2.0"
 
-keywords = [ ]
-
-description = "Examples for `moonbitlang/async`"
+keywords = []
 
 preferred_target = "native"
 
-source = "."
+description = "Lifeguard member failure detection (SWIM family) with paper-specified suspicion mechanisms."
+
+import {
+  "moonbitlang/async@0.22.7",
+}

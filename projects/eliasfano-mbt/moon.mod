@@ -15,7 +15,7 @@ version = "0.1.0"
 
 readme = "README.mbt.md"
 
-repository = ""
+repository = "github.com/huanguan-Q/paper2moonbit"
 
 license = "Apache-2.0"
 
@@ -23,4 +23,4 @@ keywords = []
 
 preferred_target = "wasm"
 
-description = ""
+description = "Elias-Fano monotone sequence encoding with paper worked-example judgments."

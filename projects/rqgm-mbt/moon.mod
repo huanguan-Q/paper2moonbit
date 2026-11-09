@@ -15,12 +15,12 @@ version = "0.1.0"
 
 readme = "README.mbt.md"
 
-repository = ""
+repository = "github.com/huanguan-Q/paper2moonbit"
 
 license = "Apache-2.0"
 
-keywords = [ ]
+keywords = [ "scheduling", "thompson-sampling", "statistics" ]
 
 preferred_target = "wasm"
 
-description = ""
+description = "Query scheduling harness core: Thompson sampling and regularized incomplete beta over deterministic LLM stubs."
