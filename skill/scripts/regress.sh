@@ -6,7 +6,7 @@
 # Purpose: after any moon toolchain upgrade, verify that all recipes still
 # hold — turns one-shot validation into continuous trust.
 set -u
-WS="${1:-/home/user/Desktop/Prompt DeepCode}"
+WS="${1:-$(pwd)}"
 MOON_VER=$(moon version 2>&1 | head -1)
 PROJECTS=(
   "xor16-mbt/roaring-mbt"
