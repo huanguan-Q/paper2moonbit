@@ -15,3 +15,11 @@ COMMUNITY_POST*.md
 COMPLIANCE*.md
 EVOLUTION*.md
 MMV*.md
+HACKATHON_PLAYBOOK-local.md
+APPLICATION-local.md
+COMMUNITY_POST-local.md
+COMPLIANCE-local.md
+EVOLUTION-local.md
+MMV_AUDIT-local.md
+MMV_DIAGNOSIS-local.md
+*-local.md
