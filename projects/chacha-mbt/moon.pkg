@@ -1,5 +1,3 @@
 import {
   "moonbitlang/core/bigint",
 }
-
-proof_enabled = true

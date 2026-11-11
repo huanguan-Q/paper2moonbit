@@ -1,5 +1,3 @@
 import {
   "moonbitlang/core/math",
 }
-
-proof_enabled = true
