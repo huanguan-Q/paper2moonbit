@@ -2,8 +2,8 @@
 
 ## 近期（本赛事周期）
 
-- [ ] 差分测试矩阵扩展至全部 17 项目（当前 10 个）
-- [ ] 剩余 5 个项目发布到 mooncakes.io（rqgm/crdt/bwt/skiplist/fpcomp）
+- [x] 差分测试矩阵扩展至全部 17 项目（16/17 四后端一致，lifeguard native-only）
+- [x] 剩余 5 个项目发布到 mooncakes.io（rqgm/crdt/bwt/skiplist/fpcomp）——17/17 全部上线
 - [ ] CI 工作流：GitHub Actions 跑 regress.sh + backend_matrix.sh
 - [ ] skill 知识库随 MoonBit 1.0 发布全面重标定
 
