@@ -1,0 +1,28 @@
+#!/bin/bash
+# Allowlist pre-commit guard (2026-11-11): any staged path not matching the
+# ALLOW prefixes fails the commit. Catches the "unthought-of" files that a
+# denylist cannot. Enable: git config core.hooksPath .githooks
+
+fail=0
+while IFS= read -r f; do
+  case "$f" in
+    projects/*|docs/*|skill/*|tooling/*|scripts/*|.github/*|\
+    README.md|LICENSE|regress.sh|.gitignore|.githooks/*)
+      case "$f" in
+        *-local*|*paper/*|*content.md|*.pdf|*.DS_Store|*.mooncakes/*|*target/*|*_build/*|\
+        *EVOLUTION*|*MMV_*|*COMPLIANCE*|*APPLICATION*|*HACKATHON_PLAYBOOK*|*COMMUNITY_POST*|*.ipynb|*.claude/*)
+          echo "DENY (denylist): $f"; fail=1 ;;
+      esac
+      ;;
+    *)
+      echo "DENY (not in allowlist): $f"; fail=1 ;;
+  esac
+done < <(git diff --cached --name-only)
+
+if [ "$fail" -eq 1 ]; then
+  echo ""
+  echo "pre-commit guard: commit rejected — see DENY lines above."
+  echo "If a file is genuinely project-related, update .githooks/pre-commit ALLOW list deliberately."
+  exit 1
+fi
+exit 0
