@@ -65,7 +65,7 @@ moon prove proofmodel                  # 形式化契约
 ## Provenance 与合规
 
 - **算法出处全标注**：每个项目的 `EXTRACTION.md` 记录论文引用、可转核心、测试判据映射、偏差声明
-- **代码独立实现**：判据引用论文，代码为原创 MoonBit（`docs/COMPLIANCE.md` 有逐包出处表与"合规三查"流程）
+- **代码独立实现**：判据引用论文，代码为原创 MoonBit——逐包出处见各项目 `EXTRACTION.md` 与 README 的 Provenance 章节
 - **RFC 类项目**：标注 IETF 开放标准版权条款下的实现许可
 - **AI 角色全程可追溯**：`docs/EVOLUTION.md` 记录 21 轮的每一步——哪些由 AI 生成、哪些决策由人确认、哪些失败被如何诊断
 
@@ -73,7 +73,6 @@ moon prove proofmodel                  # 形式化契约
 
 - [`docs/METHODOLOGY.md`](docs/METHODOLOGY.md) — 七阶段流水线与判据哲学详解
 - [`docs/EVOLUTION.md`](docs/EVOLUTION.md) — 21 轮演进史：失败、诊断与配方沉淀
-- [`docs/COMPLIANCE.md`](docs/COMPLIANCE.md) — 合规三查与逐包出处表
 - [`docs/BACKEND_MATRIX.md`](docs/BACKEND_MATRIX.md) — 四后端差分测试矩阵（10 项目全一致）
 - [`docs/ROADMAP.md`](docs/ROADMAP.md) — 路线图
 - [`tooling/moonprobe/`](tooling/moonprobe/) — 证明器能力边界探针（升级后一键复检）
