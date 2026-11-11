@@ -39,16 +39,6 @@ jobs:
           done
           echo "FAILED PROJECTS:$FAILED" | tee /tmp/failed_projects.txt
           if [ -n "$FAILED" ]; then exit 1; fi
-      - name: Upload regression logs
-        if: always()
-        uses: actions/upload-artifact@v4
-        with:
-          name: regression-logs
-          path: |
-            /tmp/chk_*.log
-            /tmp/tst_*.log
-            /tmp/failed_projects.txt
-          if-no-files-found: ignore
   backend-matrix:
     runs-on: ubuntu-latest
     strategy:
