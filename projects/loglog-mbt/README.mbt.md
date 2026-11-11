@@ -10,3 +10,8 @@ LogLog / SuperLogLog (Durand & Flajolet, ESA 2003) with bit-packed 5-bit registe
 ```bash
 moon test
 ```
+
+## Provenance & License
+
+- 出处：见本包 EXTRACTION.md（LogLog 判据来源）
+- 独立实现声明与判据来源详见同目录 `EXTRACTION.md`；许可证随仓库根 `LICENSE`（MIT）。

@@ -13,3 +13,8 @@ Tests carry the paper judgments: one-sidedness, row-sum conservation, Thm 1 wind
 ```bash
 moon test
 ```
+
+## Provenance & License
+
+- 出处：见本包 EXTRACTION.md（Count-Min Sketch, Cormode & Muthukrishnan 2005 判据）
+- 独立实现声明与判据来源详见同目录 `EXTRACTION.md`；许可证随仓库根 `LICENSE`（MIT）。

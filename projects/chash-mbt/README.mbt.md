@@ -11,3 +11,8 @@ clockwise-ring engineering variant.
 ```bash
 moon test
 ```
+
+## Provenance & License
+
+- 出处：见本包 EXTRACTION.md（连续哈希判据来源）
+- 独立实现声明与判据来源详见同目录 `EXTRACTION.md`；许可证随仓库根 `LICENSE`（MIT）。
