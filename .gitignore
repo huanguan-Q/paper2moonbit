@@ -8,3 +8,6 @@ _build/
 paper/
 content.md
 *.pdf
+
+HACKATHON_PLAYBOOK.md
+APPLICATION*.md
