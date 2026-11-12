@@ -6,7 +6,7 @@
 fail=0
 while IFS= read -r f; do
   case "$f" in
-    projects/*|docs/*|skill/*|tooling/*|scripts/*|.github/*|\
+    projects/*|docs/*|skill/*|tooling/*|scripts/*|.github/*|repro/*|\
     README.md|LICENSE|regress.sh|.gitignore|.githooks/*)
       case "$f" in
         *-local*|*paper/*|*content.md|*.pdf|*.DS_Store|*.mooncakes/*|*target/*|*_build/*|\

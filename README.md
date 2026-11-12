@@ -74,6 +74,7 @@ moon prove proofmodel                  # 形式化契约
 - [`docs/METHODOLOGY.md`](docs/METHODOLOGY.md) — 七阶段流水线与判据哲学详解
 - [`docs/BACKEND_MATRIX.md`](docs/BACKEND_MATRIX.md) — 四后端差分测试矩阵（17 项目，16/17 全一致；lifeguard native-only）
 - [`docs/ROADMAP.md`](docs/ROADMAP.md) — 路线图
+- [`docs/REPRODUCE.md`](docs/REPRODUCE.md) — 用 v0.3.3 独立重写一遍 Count-Min Sketch 的过程记录（含对拍结果与限制声明）
 - [`tooling/moonprobe/`](tooling/moonprobe/) — 证明器能力边界探针（升级后一键复检）
 - [`skill/`](skill/) — 可分发的 Agent Skill（SKILL.md + 知识库 + 回归脚本）
 
