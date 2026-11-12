@@ -1,0 +1,20 @@
+// Generated using `moon info`, DON'T EDIT IT
+package "huanguan-Q/sais"
+
+// Values
+pub fn sais_core(Array[Int32], Int32) -> Array[Int32]
+
+pub fn suffix_array(String) -> Array[Int32]
+
+// Errors
+
+// Types and methods
+pub struct LCG {
+  // private fields
+}
+pub fn LCG::new(UInt64) -> Self
+pub fn LCG::next_u64(Self) -> UInt64
+
+// Type aliases
+
+// Traits

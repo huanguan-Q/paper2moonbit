@@ -1,10 +1,10 @@
 ---
 name: paper2moonbit
-description: "论文转 MoonBit 代码编排技能（Paper2MoonBit）。输入一篇研究论文（PDF/URL/文件路径），输出可编译、可测试、带规格的 MoonBit 实现。分七阶段流水线编排本机 MoonBit 技能族：moonbit-cli-manager（环境自检）、moonbit-orientation（API 查证）、moonbit-agent-guide（项目规范）、moonbit-spec-test-development（规格先行）、instinct-driven-moonbit（验证式代码生成）、moonbit-proof / moonbit-proof-lab / moonmeta-verifier（形式化验证）、moonbit-lexgen（解析器类论文）、moonbit-async（网络类论文）、moonbit-refactoring（惯用法收尾）、moonbit-extract-spec-test（补测试）。触发词：论文转代码、paper2moonbit、paper to moonbit、论文转 MoonBit、复现论文、论文复现、用 MoonBit 实现论文算法、把这篇论文实现成项目、arxiv 转代码、论文代码化；数据结构/概率算法论文（Bloom filter、quotient filter、Roaring Bitmap、Elias-Fano、HyperLogLog、MinHash、压缩索引）；解析器/词法/DSL/正则引擎论文；网络协议/共识/gossip/故障检测论文（SWIM、CRDT）；要求形式化验证或 moon prove / Z3 contract 的实现。NOT for: 直接回答论文内容问题（无生成意图）、Python/Java 等其他语言的论文实现、通用 MoonBit 编程问答（→ moonbit-orientation）。"
-version: "0.2.0"
+description: "论文转 MoonBit 代码编排技能（Paper2MoonBit）。输入一篇研究论文（PDF/URL/文件路径），输出可编译、可测试、带规格的 MoonBit 实现。分七阶段流水线编排本机 MoonBit 技能族：moonbit-cli-manager（环境自检）、moonbit-orientation（API 查证）、moonbit-agent-guide（项目规范）、moonbit-spec-test-development（规格先行）、instinct-driven-moonbit（验证式代码生成）、moonbit-proof / moonbit-proof-lab / moonmeta-verifier（形式化验证）、moonbit-lexgen（解析器类论文）、moonbit-async（网络类论文）、moonbit-refactoring（惯用法收尾）、moonbit-extract-spec-test（补测试）。触发词：论文转代码、paper2moonbit、paper to moonbit、论文转 MoonBit、复现论文、论文复现、用 MoonBit 实现论文算法、把这篇论文实现成项目、arxiv 转代码、论文代码化；数据结构/概率算法论文（Bloom filter、quotient filter、Roaring Bitmap、Elias-Fano、HyperLogLog、MinHash、压缩索引、后缀数组/SA-IS）；密码学/流密码/AEAD 论文（ChaCha20、Poly1305）；解析器/词法/DSL/正则引擎论文；网络协议/共识/gossip/故障检测论文（SWIM、CRDT）；要求形式化验证或 moon prove / Z3 contract 的实现。NOT for: 直接回答论文内容问题（无生成意图）、Python/Java 等其他语言的论文实现、通用 MoonBit 编程问答（→ moonbit-orientation）。"
+version: "0.3.3"
 metadata:
   author: "local"
-  changelog: "v0.2.0 (2026-11-03) 六轮试跑收束：新增五条领域路由决策表（数据结构规格先行/位结构数学建模/词法文法 vs 引擎手写/async 确定性仿真/CAPT-FORMAL）；核心原则写入「证明≠语义」；触发词扩展至算法名、协议类与验证类；AVOID 补prove盲区与变量移位死循环"
+  changelog: "v0.3.3 (2026-11-12) 依 MoonBit 官网 20261105 v0.10.19 公告 + 本机 moon --version / core moon.mod / cli latest 时间戳逐条校准官方数据：纠正 v0.10.x 版本线断言、JSON 清单已拒绝、AGENTS.md 权威路径、moon test -f 语义、proof_enabled 写法、to_uint 弃用说法、async 迁移方向、quickcheck 精确签名，并补官方组件版本与命令清单；v0.3.2 (2026-11-12) 依公开风控 SOP 审计修订：知识库 R14 论文全文抓取配方加版权否定标注（事件 #3 同源）、pipeline 去「全文」歧义、两版同步；v0.3.1 (2026-11-12) 全面核查收口：regress.sh 默认工作区改用 pwd、审计 hash 重标定、知识库补 17 项目权威清单并标注历史快照、pipeline.md S5 五条→七条路由配方同步、发布配方改用 moon login 表述、仓库副本同步；v0.3.0 (2026-11-11) 跟进 R18-R26：领域清单+2（ChaCha20/Poly1305 密码学、SA-IS 后缀数组）、回归套件 15→17、BigInt 域 FORMAL 定论入路由（FORMAL 可证域终态=Int+div/mod+FixedArray）、quickcheck 配方、合规三查、MMV 假绿防御配方、工具链缺陷记录（check/prove 解析器不一致）；v0.2.0 (2026-11-03) 六轮试跑收束：新增五条领域路由决策表（数据结构规格先行/位结构数学建模/词法文法 vs 引擎手写/async 确定性仿真/CAPT-FORMAL）；核心原则写入「证明≠语义」；触发词扩展至算法名、协议类与验证类；AVOID 补prove盲区与变量移位死循环"
 ---
 
 # Paper2MoonBit — 论文转 MoonBit 代码编排
@@ -13,11 +13,9 @@ metadata:
 
 本技能是**编排器**：把一篇论文的算法逻辑转化为 MoonBit 代码仓库。方法骨架来自 PaperCoder（Plan→Analyze→Code）与 DeepCode（信道优化四操作），目标语言为 MoonBit，并利用 MoonBit 形式化验证生态做出差异化。
 
-**适用**：算法/数据结构/解析器/编译器/协议类论文（纯逻辑，无重型依赖）。已实测通过的论文类型（moon 0.1.20261104 下全量回归验证；**领域清单的单一权威定义在 references/moonbit-context.md 按轮次章节**，此处为摘要）：位图数据结构（Roaring）、压缩编码（Elias-Fano）、概率估计（HyperLogLog）、过滤器（Xor16）、词法引擎（ZipLex）、成员协议（Lifeguard/SWIM）、分布式协作数据结构（CRDT）、搜索调度 harness + 数值统计核心（RQGM：Thompson 采样/逆不完全 Beta，LLM 组件 stub 化）、文本压缩管线（BWT：字符串变换/自适应编码）、概率性数据结构/有序字典（Skip List：几何分布层数 + oracle 序列测试）、分布式系统算法（一致性哈希：ranged hash family + 单调性/平衡/平滑性判据）、概要数据结构（Count-Min Sketch：单侧误差/行和守恒/ε·N 窗口判据）、基数估计家族对比（LogLog/SuperLogLog：位打包寄存器 + 多种子误差序与分散度判据）、浮点补偿算术（Goldberg 1991：FastTwoSum/Kahan，Double 域 FORMAL 不可用定论）、系统工程类（CoDel/RFC 8289：环境 stub 化降级路线验证）。
+**适用**：算法/数据结构/解析器/编译器/协议类论文（纯逻辑，无重型依赖）。已实测通过的论文类型（**2026-11-12 核验的官方最新通道**：构建系统 moon 0.1.20261104 / 编译器 moonc 与 core v0.10.20+65efd5b93，官网 updates 最新 20261105 v0.10.19；此组合下全量回归验证；**领域清单的单一权威定义在 references/moonbit-context.md 按轮次章节**，此处为摘要）：位图数据结构（Roaring）、压缩编码（Elias-Fano）、概率估计（HyperLogLog）、过滤器（Xor16）、词法引擎（ZipLex）、成员协议（Lifeguard/SWIM）、分布式协作数据结构（CRDT）、搜索调度 harness + 数值统计核心（RQGM：Thompson 采样/逆不完全 Beta，LLM 组件 stub 化）、文本压缩管线（BWT：字符串变换/自适应编码）、概率性数据结构/有序字典（Skip List：几何分布层数 + oracle 序列测试）、分布式系统算法（一致性哈希：ranged hash family + 单调性/平衡/平滑性判据）、概要数据结构（Count-Min Sketch：单侧误差/行和守恒/ε·N 窗口判据）、基数估计家族对比（LogLog/SuperLogLog：位打包寄存器 + 多种子误差序与分散度判据）、浮点补偿算术（Goldberg 1991：FastTwoSum/Kahan，Double 域 FORMAL 不可用定论）、系统工程类（CoDel/RFC 8289：环境 stub 化降级路线验证）、密码学原语（ChaCha20/Poly1305 RFC 8439：全向量判定 + AEAD nonce 构造 + BigInt FORMAL 定论）、字符串索引（SA-IS 线性后缀数组 DCC 2009：论文 PDF 不可达降级 + 参考实现先验证再机械翻译路线）。
 
-**开源化**：12 个包已发布 mooncakes.io（huanguan-Q/{cms,loglog,xor16filter,roaring,eliasfano,hyperloglog,ziplex,lifeguard,codel,chacha,chash,sais}）；四后端差分矩阵全一致（10 项目 × wasm/wasm-gc/js/native）。
-
-**回归套件**：`scripts/regress.sh`——15 个实例项目（moon check/test/prove 矩阵）的一键全量回归。工具链升级后必跑：`sh regress.sh <workspace>`。项目清单注意：多轮共用容器目录（xor16-mbt/ 下 6 个独立 moon 项目），顶层另有 9 个——**以目录清单为准，勿按轮数计**。首跑（moon 0.1.20261102）与升级复跑（moon 0.1.20261104）均 ALL GREEN；脚本内不得用 `rm -rf` 清证明缓存（会触发 safe-delete 拦截造成假阳性 FAIL）。
+**回归套件**：`scripts/regress.sh`——17 个实例项目（moon check/test/prove 矩阵）的一键全量回归。工具链升级后必跑：`sh regress.sh <workspace>`。项目清单注意：多轮共用容器目录（xor16-mbt/ 下 6 个独立 moon 项目），顶层另有 11 个——**以目录清单为准，勿按轮数计**。首跑（moon 0.1.20261102）与升级复跑（moon 0.1.20261104，含差分矩阵 17 项目 × 4 后端）均验证通过；脚本内不得用 `rm -rf` 清证明缓存（会触发 safe-delete 拦截造成假阳性 FAIL）。
 **不适用**：需要 PyTorch/numpy 重型训练生态的 ML 复现类论文——MoonBit 科学计算生态尚不成熟。遇到此类论文，明确告知用户局限，建议降级为「只实现核心算法模块」。
 
 ## 核心原则
@@ -54,6 +52,8 @@ metadata:
 | 贡献 = 词法文法/语法本身，需把文法变成 lexer | moonbit-lexgen（.mbtx 规格生成 DFA） | 仅当贡献在文法时使用 |
 | 贡献 = 解析引擎算法（Brzozowski 导数、Packrat、Earley） | 纯手写解释器 | 用 moonlex 生成会绕开论文贡献，禁止走 lexgen |
 | 网络协议/共识/gossip/故障检测 | moonbit-async 确定性仿真 | 不碰真实 socket：虚拟总线 = relay 任务 + 固定延迟，死节点 = 无人消费的 inbox |
+| 密码学原语（流密码/AEAD/MAC，ChaCha20、Poly1305 类） | 主线 + 规格先行；验证走 RUNTIME | BigInt 域 FORMAL 不可证（Error 4207）→ 一律 RUNTIME 全向量判定；核心域 FORMAL 可证集 = Int + div/mod + FixedArray；全称判据用 core 内置 quickcheck property 化 |
+| 论文 PDF 不可达 / 自研实现连续失败（≥3 轮） | 降级：参考实现先验证再机械翻译 | 公开参考实现（≥2 份互证）先在脚本语言验证判据，再机械翻译 MoonBit 一次过；注意源代码许可核查（无 license = 默认保留所有权利，翻译即未授权衍生） |
 
 详细配方与每条路由的实测坑位见 `references/pipeline.md` S5 节。
 

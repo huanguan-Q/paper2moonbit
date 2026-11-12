@@ -1,0 +1,48 @@
+// Generated using `moon info`, DON'T EDIT IT
+package "huanguan-Q/chacha"
+
+import {
+  "moonbitlang/core/bigint",
+}
+
+// Values
+pub fn aead_chacha20_poly1305(Array[Int32], Array[Int32], Array[Int32], Array[Int32]) -> AeadResult
+
+pub fn bytes_to_hex(Array[Int32]) -> String
+
+pub fn chacha20_block(Array[Int32], UInt32, Array[Int32]) -> Array[Int32]
+
+pub fn chacha20_encrypt(Array[Int32], UInt32, Array[Int32], Array[Int32]) -> Array[Int32]
+
+pub fn clamp_r(@bigint.BigInt) -> @bigint.BigInt
+
+pub fn hex_bytes(String) -> Array[Int32]
+
+pub fn le_word(Array[Int32], Int32) -> UInt32
+
+pub fn poly1305_mac(Array[Int32], Array[Int32]) -> Array[Int32]
+
+pub fn quarter_round(UInt32, UInt32, UInt32, UInt32) -> QrResult
+
+pub fn quarter_round_state(FixedArray[UInt32], Int32, Int32, Int32, Int32) -> FixedArray[UInt32]
+
+pub fn word_le(UInt32, Array[Int32]) -> Unit
+
+// Errors
+
+// Types and methods
+pub struct AeadResult {
+  ciphertext : Array[Int32]
+  tag : Array[Int32]
+}
+
+pub struct QrResult {
+  a : UInt32
+  b : UInt32
+  c : UInt32
+  d : UInt32
+}
+
+// Type aliases
+
+// Traits

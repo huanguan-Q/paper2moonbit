@@ -18,11 +18,13 @@ PROJECTS=(
   "rqgm-mbt"
   "crdt-mbt"
   "bwt-mbt"
+  "chacha-mbt"
   "chash-mbt"
   "cms-mbt"
   "codel-mbt"
   "fpcomp-mbt"
   "loglog-mbt"
+  "sais-mbt"
   "skiplist-mbt"
 )
 echo "moon version: $MOON_VER"

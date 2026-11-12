@@ -48,12 +48,12 @@
 
 目的：补齐 MoonBit 语料稀缺短板，生成前先查证、后动手。
 
-1. **先读本机权威文档**：`~/.moon/AGENTS.md`（语言基础、项目布局、核心事实），以及 `moon new` 生成的模板注释（新工具链的 moon.mod/moon.pkg 格式、测试文件约定都在其中）。
+1. **先读本机权威文档**：`~/.moon/lib/core/AGENTS.md`（标准库布局、重构与 moon info/fmt 约定；2026-11-12 核实：`~/.moon/AGENTS.md` 是指向 moon-pilot 内部文件的失效符号链接，勿引用），以及 `moon new` 生成的模板注释（新工具链的 moon.mod/moon.pkg 格式、测试文件约定都在其中）。
 2. 加载 **moonbit-orientation**，逐项查证：
    - 蓝图接口签名用到的标准库/core API 是否存在、真实签名是什么
    - 蓝图中假设的数据结构 MoonBit 是否原生提供（`Map`/`Option`/`Result`/`FixedArray` 等）
    - 记录「论文假设 vs MoonBit 实际」的差异清单，必要时修订 S2 蓝图
-2. 加载 **moonbit-agent-guide**，确定项目骨架（moon.mod.json、moon.pkg、源文件与测试目录布局），执行 `moon new` 或手工建骨架。
+2. 加载 **moonbit-agent-guide**，确定项目骨架（**TOML 风格 `moon.mod` / `moon.pkg`**——官方 v0.10.19 起 JSON 清单不再被接受，勿再写 `moon.mod.json`；源文件与测试目录布局），执行 `moon new` 或手工建骨架。
 
 ## S4 规格先行
 
@@ -65,7 +65,7 @@
 
 ## S5 代码生成
 
-**路由决策（进入本阶段时做一次，五条配方）**。判断依据是「论文贡献是什么」，不是「论文领域是什么」：
+**路由决策（进入本阶段时做一次，七条配方）**。判断依据是「论文贡献是什么」，不是「论文领域是什么」：
 
 | 判断问题 | 命中 → 路由 | 配方要点 |
 |---|---|---|
@@ -73,13 +73,18 @@
 | 贡献 = 解析引擎算法（导数法/Packrat/Earley）？ | **纯手写解释器** | 禁止走 lexgen——生成会绕开论文贡献（ZipLex 实证） |
 | 纯函数核心、性质可写成算术/逻辑命题？ | **instinct-driven-moonbit CAPT（FORMAL 域）** | probe 先行；UInt64 位运算不可证 → 数学整数建模或降级 RUNTIME；必须保留论文判据测试（证明≠语义） |
 | 网络协议/共识/gossip/故障检测？ | **moonbit-async 确定性仿真** | 不碰真实 socket；状态机与 driver 分文件，状态机可脱离 async 单测 |
+| 密码学原语（流密码/AEAD/MAC）？ | **主线 + 规格先行；验证只走 RUNTIME** | BigInt/Double 域 FORMAL 不可证（Error 4207）；RFC 全向量判定 + core 内置 quickcheck property 化全称判据；AEAD nonce = fixed-common + IV（R19 实证） |
+| 论文 PDF 不可达或自研连续 ≥3 轮失败？ | **降级：参考实现先验证再机械翻译** | ≥2 份公开参考实现互证 → 脚本语言先验判据 → 机械翻译 MoonBit；先核源许可（无 license = 未授权衍生），判据改定义性判据（R20/R21 实证） |
 | 以上皆否（数据结构/压缩/概率结构等）？ | **主线 + 规格先行** | S4 论文判据→测试先行，instinct-driven 或直接实现向测试收敛 |
 
 各路由详细配方与实测坑位见下方分类条目。
 
+- **密码学原语路由（2026-11-09 ChaCha20/Poly1305 实证）**：S1 直接把 RFC 标准测试向量抽成判据（T-QR/T-BLOCK/T-POLY/AEAD 等），S4 写全向量测试；实现按 RFC 伪代码逐块机械翻译，每块立即 moon check。高频 API 坑：UInt 字面量后缀 `U`（`UL` 是 UInt64）、UInt 无 `rotate_left` 需手写 rol、`String.replace(String, old~, new~)` 三参非 self 方法、`BigInt.shl/div` 参数是 Int、`mod` 声明必须放 moon.pkg。BigInt 域 FORMAL 报 4207 → 一律 RUNTIME；全称性质用 core 内置 quickcheck property 化。
+- **降级路线（2026-11-09 SA-IS 实证 + R21 合规）**：论文 PDF 不可达时，结构依论文图表引文 + ≥2 份公开参考实现互证；判据改用定义性判据（perm/有序/朴素 oracle 一致）。自研连续 ≥3 轮失败即切换：先在脚本语言跑通参考实现判据，再机械翻译 MoonBit。**翻译前必须核源许可**——无 license 的公开代码默认保留所有权利，翻译即未授权衍生；须改为独立实现并留 Provenance 声明（合规三查：思想/表达二分、源许可、RFC 版权注记）。
+
 按 S2 依赖序逐文件生成，第 i 个文件的生成输入 = 论文对应章节 + 蓝图该文件职责 + 其依赖的已生成文件的真实签名 + S4 对应规格。**每个文件写完立即执行 `moon check`**，失败当场修（见 S6 修复规则），绿了才生成下一个文件。
 
-形式化路线（可选，需满足：纯函数域 + 用户要求或算法关键）：按 instinct-driven-moonbit 定义 Contract 前后置条件，`moon prove` 验证。降级域（while 后置条件、GC Array、Map、@math.*）不硬上证明，退回 `proof_assert` + moon test + PBT。
+形式化路线（可选，需满足：纯函数域 + 用户要求或算法关键）：按 instinct-driven-moonbit 定义 Contract 前后置条件，`moon prove` 验证。降级域（while 后置条件、GC Array、Map、@math.*、Double/BigInt/UInt64 位运算——R19 定论：FORMAL 可证集仅 Int + div/mod + FixedArray）不硬上证明，退回 `proof_assert` + moon test + PBT。**R26 工具链缺陷**：fn 级 forall 契约 prove 可证但 check 门报 parse error（.mbtp 解析器不一致），双门无法同绿；诊断探针用完即删，勿留在交付包（cms 回归红灯实证）。
 
 ## S6 验证闭环
 

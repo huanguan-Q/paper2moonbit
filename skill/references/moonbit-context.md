@@ -64,7 +64,7 @@
 
 ## 第六轮试跑新增（HyperLogLog，DMTCS 2007，instinct-driven-moonbit 主线实测 2026-11-03）
 
-- **CAPT 分层实测成立**：FORMAL 域（Int+div/mod+for 循环+where contract）`moon prove` 3 goals proved 全真验证；Double/@math.ln 估计器按预期降级 RUNTIME。moon.pkg 须 `options("proof-enabled": true)`，判据三件套 rc==0 + Summary 行 + goals>0。
+- **CAPT 分层实测成立**：FORMAL 域（Int+div/mod+for 循环+where contract）`moon prove` 3 goals proved 全真验证；Double/@math.ln 估计器按预期降级 RUNTIME。moon.pkg 须 `proof_enabled = true`（**2026-11-12 校准**：17 项目实测 8 处均为该写法；旧记录 `options("proof-enabled": true)` 已废），判据三件套 rc==0 + Summary 行 + goals>0。
 - **新发现——Why3 保留字撞参数名**：函数参数名 `old` 让生成的 WhyML syntax error（Why3 的 `old` 指入口状态）——改名即全通。参数命名避开 old/result 类逻辑侧词。
 - **循环不变量语法（实测）**：技能文档的 `for...nobreak {}` 关键字在本工具链不存在；正确形态是 `for i in a..=b { .. } where { proof_invariant: ... }`。**不变量必须含循环变量自身的界**（只给结果界会 postcondition timeout；补 `i >= 1 && i <= bits+1` 后通过）。
 - **函数级 contract 是 goals 的前提**：只有循环 where 无函数 require/ensure 时 prove 输出 0 goals（零验证，W6 变体）。
@@ -148,7 +148,7 @@
 - **`@math.abs` 不存在**——Double 用 `.abs()` 方法（第八轮已证）；perl 替换 `@math` 时 `@` 会被当数组插值吞掉，需转义 `\@math`。
 - **Dekker 六步 TwoSum 在本环境失效**：b 远小于 ulp(a) 时（a=6.29e91, b=1.04e-111 实测）err 算出 0——b−b' 的舍入吸收了 b。TwoSum 一律用**分支式实现**（|a|≥|b| 调 FastTwoSum，否则换序），偏差登记。教训：文献公式的浮点精确性论证依赖操作数尺度关系，跨尺度随机流测试能击穿背错顺序的实现——这正是"worked example + 极端尺度随机流"判据的价值。
 - **Kahan Theorem 8 的可观测强判据**：流 = 2^53 后接 1000 个 1.0：naive 和 = 2^53（小项全被吃），Kahan 和 = 2^53+1000 **值精确**——把论文定理的抽象误差界变成一次性位级断言。
-- Goldberg 1991 全文在 docs.oracle.com 有合法 HTML 托管（PDF 链接失效）；HTML→文本用 python3 正则剥标签即可。
+- Goldberg 1991 全文在 docs.oracle.com 有合法 HTML 托管（PDF 链接失效）；HTML→文本用 python3 正则剥标签即可。⚠️ **风控修订（§4.5 事件 #3，2026-11-12）：此法仅限现场阅读以抽取判据/公式/伪代码，禁止把第三方论文全文转存进仓库（paper/content.md 类）——2026-11-11 已实测为版权高风险并全部 git rm + gitignore `paper/`**。引用一律标注出处，代码独立编写。
 
 ## 第十五轮试跑新增（CoDel，RFC 8289，系统论文降级路线验证，2026-11-08）
 
@@ -161,7 +161,7 @@
 
 ## 第十六轮：事实核实 + 全量回归首跑（2026-11-08）
 
-- **项目清单核实**：15 个 moon 项目，**多轮共用容器目录**——xor16-mbt/ 下 6 个独立项目（roaring/eliasfano/hyperloglog/xor16filter/ziplex/lifeguard，各含 moon.mod），顶层 9 个（rqgm/crdt/bwt/chash/cms/codel/fpcomp/loglog/skiplist）。**数项目按 moon.mod 清单数，勿按轮数计**。
+- **项目清单核实（当时快照 2026-11-08；现状见 R26 附录的 17 项目权威清单）**：15 个 moon 项目，**多轮共用容器目录**——xor16-mbt/ 下 6 个独立项目（roaring/eliasfano/hyperloglog/xor16filter/ziplex/lifeguard，各含 moon.mod），顶层 9 个（rqgm/crdt/bwt/chash/cms/codel/fpcomp/loglog/skiplist）。**数项目按 moon.mod 清单数，勿按轮数计**。
 - **全量回归首跑（moon 0.1.20261102）：15×check + 15×test + 8×prove 全部 PASS**——此前"升级零破坏"是只在新项目上验证的推断，本轮升级为全量证据。配方在新 moon 版本下成立是**必然性证据**而非运气（所有 API 断言均有 check 背书）。
 - **回归脚本假阳性坑**：脚本中 `rm -rf _build/verif` 会触发 safe-delete 守卫（批量删除确认）返回非零，`&&` 链断裂导致 PROVE 假 FAIL——回归脚本**不得用 rm 清 prove 缓存**，缓存命中的 prove 结果同样有效。
 - 回归脚本沉淀：`references/regress.sh`，PASS/FAIL 矩阵输出，整体 exit code 反映绿/红。
@@ -176,10 +176,47 @@
   - lambda &&（cap_level 同款）仍可证 ✓；div 等式（r == 100000/c2）新版可证 ✓
   - **新增事实：Double 契约错误具有阻断性**——主包一个 Double 探针报 4207 会让同包其余探针全部不跑；排查时务必隔离 Double 探针单独建包
   - **探针复检工具**：`moonprobe/` 项目保留，含全部 6 类边界探针——每次 moon 升级后 `moon prove . + moon prove proofmodel` 即可判边界漂移，无需重写探针
-- 官方 v0.10.x（first-class formal verification 等）不在 cli latest 通道内；若需跟踪正式线，另行评估 moonup/版本共存方案。
+- 官方 v0.10.x 正式线不在这条通道；若需跟踪正式线，另行评估 moonup/版本共存方案。**⚠ 2026-11-12 校准（此条已废）**：`moon --version` 实测 moonc **v0.10.20+65efd5b93**（2026-11-05）、core `version = 0.10.20+65efd5b93`，即 v0.10.x 正是本机编译器/标准库版本线，与构建系统 moon 0.1.date 线属同一工具链的两套组件版本号，无需 moonup。官网 updates 最新为 **20261105 v0.10.19 Release**（moonc v0.10.19）
 
+## 第十八轮：mooncakes 发布链路实测（2026-11-09）
 
+- moon.mod DSL 坑：keywords 数组元素必须带引号（裸逗号列表触发 Lexing error）——模板 `[ ]` 填充按 `"elem"` 格式
+- 发布前提：已完成 `moon login`（登录态由工具链管理，勿在文档/代码中引用其文件路径）；`moon publish` 自带 moon check 前置；线上 Moondoc 自动生成 API 文档
 
+## 第十九轮：ChaCha20/Poly1305 + BigInt FORMAL 定论（2026-11-09）
+
+- **BigInt 域 FORMAL 定论**：Error 4207 unsupported expression——与 Double 同判，一律 RUNTIME。**FORMAL 可证域终态 = Int + div/mod + FixedArray**（UInt64 位运算、BigInt、Double 均禁区）
+- quickcheck 配方：`moonbitlang/core/quickcheck` 已并入 core（外部 moonbitlang/quickcheck@0.15.1 是旧渠道）；`check((A) -> Bool, seed?, count?)` property 化论文全称判据。**2026-11-12 精确签名核验**（core/quickcheck/pkg.generated.mbti）：`check((A) -> Bool raise?, filter?, observe?, counterexample_context?, count? : UInt32, max_size?, max_shrinks?, discard_ratio? : UInt32, seed? : UInt64, loc~) -> Unit raise`——简写配方仍可用，参数类型以此为准
+- API 坑六条：UInt 字面量后缀 `U`（`UL` 是 UInt64）；UInt 无 `rotate_left` 手写 rol；`String.replace` 是 `(String, old~, new~)` 三参非 self 方法；`BigInt.shl/div` 参数是 Int；`mod` 声明必须放 moon.pkg 不许写 .mbt 内；AEAD nonce = fixed-common(counter 派生位) + IV
+
+## 第二十轮：SA-IS 难度压测 + 降级路线定论（2026-11-09）
+
+- **参考实现先行配方**：自研实现连续 ≥3 轮失败（隐式哨兵缺失/种子 cursor 污染/类型比较缺失/契约不一致）→ Python 参考实现先验证判据（banana+随机），再机械翻译 MoonBit 一次通过——自研心智模型不可靠时的正解
+- 论文 PDF 不可达降级：结构按论文图表引文 + ≥2 份公开参考实现互证；判据全部改为 SA 定义性判据（perm/有序/朴素 oracle 一致）
+
+## 第二十一轮：合规三查（2026-11-09）
+
+- 判据实现的合规三查：① 思想/表达二分自查（判据引论文、代码原创）② 源许可核查（翻译/移植第三方代码必须有 license——无 license 即默认保留所有权利，翻译属未授权衍生）③ RFC 类规范补版权注记（IETF Trust 条款允许实现性复制）
+- 算法思想不受版权保护，全部实现标注论文出处 → 抄袭风险低；ChaCha20/Poly1305 公有领域
+
+## 第二十二/二十三轮：参赛仓库工程化配方（2026-11-09）
+
+- `moon publish` 对库包自动生成 demo main.mbt + pkgtype executable——仓库收集/复制时须配对处理，否则报 "Unexpected main in non-main package"
+- 跨机器/目录复制项目必须带 `.mooncakes` 依赖缓存或重装依赖
+- GitHub Actions step name 值含"冒号+空格"触发 YAML mapping error；匿名 API 拿不到 jobs/logs（public repo 也要认证），CI 诊断用排除法二分最快
+
+## 第二十四轮：差分矩阵 + CI 定型（2026-11-09）
+
+- 17 项目 × 4 后端差分 **16/17 全一致**；lifeguard native-only 是平台包络（moon.pkg declared supported_targets + 依赖 async native-stub）而非缺陷——交付时诚实标注平台边界
+
+## 第二十五/二十六轮：MMV 审计与深度诊断（2026-11-11）
+
+- 假绿防御实战：rc=0 必须交叉验证 `.proof.json` valid>0（捕获 chacha/fpcomp 两处零契约残留）；双求解器 cross（PATH 移除 z3 → alt-ergo 复跑）达 confirmed 级
+- **核心发现：FORMAL 层与实现层"并置而非贯通"**——goals 全为独立引理，fn 级契约挂接数=0，实现正确性机器保证全在 RUNTIME 层。能力提升前，证明是"局部引理证据"而非"函数正确性证书"
+- **工具链缺陷级发现：check/prove 的 .mbtp 解析器不一致**——forall 量化的 fn 级契约 prove 路径可证但 check 门报 parse error，双门无法同绿（能力探针：.length() 进逻辑层/数组索引编码/invariant() 循环不变式/forall 数组量化语法均 prove 支持）。moon 1.0 后重试
+- **探针残留教训**：诊断探针文件在结论沉淀后必须即删——11-11 实证 fn_probe.mbtp 残留致 cms check/prove 双 FAIL 混入回归矩阵（文件头标注所属轮次是甄别残留的有效约定）
+- 2026-11-11 复跑：17 项目全量回归 ALL GREEN（moon 0.1.20261104，17×check + 17×test + 9×prove）
+- **当前项目清单权威状态（2026-11-12 核实）**：17 个 moon 项目 = 顶层 11（rqgm/crdt/bwt/chacha/chash/cms/codel/fpcomp/loglog/sais/skiplist）+ xor16-mbt 容器 6（roaring/eliasfano/hyperloglog/xor16filter/ziplex/lifeguard）；17/17 包已发布 mooncakes.io，四后端差分 16/17 一致（lifeguard native-only 属平台包络而非缺陷）。**SKILL.md 与 regress.sh 均以此为基准**；第 16/17 轮的 15 项目记录是当时快照，勿再沿用
 
 
 
@@ -230,35 +267,43 @@ test "eval: 2+3=5" {
 }
 ```
 
-## 工具链命令
+## 工具链命令（2026-11-12 依本机 `moon help` 全量校准）
 
 | 命令 | 用途 |
 |---|---|
-| `moon new <name>` | 新建项目骨架 |
-| `moon check` | 类型检查（S5/S6 每文件必跑；报错信息精确，修复循环以此为主反馈源） |
-| `moon test` | 跑测试 |
-| `moon test -p <pkg> -f <file>` | 只跑某包/文件 |
-| `moon build` / `moon run` | 构建 / 运行 |
-| `moon prove` | 形式化证明（proof_enabled 包） |
-| `moon ide <cmd>` | 语义级 IDE 操作（rename/locate 等，输出可应用的 patch） |
+| `moon new <name>` | 新建项目骨架（TOML 风格 `moon.mod` / `moon.pkg`） |
+| `moon check` | 类型检查（S5/S6 每文件必跑；v0.10.19 起成功后自动更新 `pkg.generated.mbti`，`--no-mbti` 可关闭） |
+| `moon test` | 跑测试（v0.10.19 起测试包默认并行；`-j N` 限并发、`--no-parallelize` 串行） |
+| `moon test -p <pkg>` | 只跑指定包（`-p, --package`）；**`-f` 实为 `--filter <FILTER>`（按测试名过滤），不是指定文件**；指定文件用位置参数 `moon test <path>` |
+| `moon build` / `moon run` | 构建 / 运行（`runwasm` 已弃用） |
+| `moon prove` | 形式化证明（`proof_enabled = true` 包） |
+| `moon ide <cmd>` | 语义级 IDE 操作（隐藏命令，help 清单不列；`peek-def` / `find-references`） |
 | `moon add <pkg>` | 添加 mooncakes 依赖 |
+| `moon explain --diagnostic [<id>]` / `--attribute` | 查官方诊断码 / 属性说明 |
+| `moon info` / `moon doc` / `moon fmt` | 生成 `.mbti` 接口 / 文档与符号检索 / 格式化 |
+| `moon upgrade` | 升级工具链（`--force` / `--dev`；**实测不支持 `--dry-run`**） |
+| `moon testcli` / `moon coverage` | CLI 测试（实验性，替代 cram）/ 覆盖率 |
+| `moon login` / `whoami` / `register` / `publish` / `update` | 账号与发布链路（v0.10.19 起 `moon install` 不再用于同步依赖） |
+
+**官方版本体系（2026-11-12 三源核验）**：① 本机 `moon --version`：构建系统 `moon 0.1.20261104 (940aa18 2026-11-04)`、编译器 `moonc v0.10.20+65efd5b93 (2026-11-05)`、`moonrun 0.1.20261104`、feature flags `rr_moon_mod, rr_moon_pkg`；② `~/.moon/lib/core/moon.mod`：`version = 0.10.20+65efd5b93`、license Apache-2.0；③ 官网 updates 最新条目 **20261105 MoonBit v0.10.19 Release**，且 cli `binaries/latest` 与 `cores/core-latest` 的 Last-Modified 均为 2026-11-05 09:5x GMT（11-05 后未更新）→ **本机工具链即官方当前最新通道**。构建系统 0.1.date 线与编译器 v0.10.x 线是同一工具链的两套组件版本号，不是两条发布通道。
 
 ## 项目布局约定（对齐 moonbit-agent-guide）
 
-- 清单为 TOML 风格 `moon.mod` / `moon.pkg`（旧 json 格式已过时）
+- 清单为 TOML 风格 `moon.mod` / `moon.pkg`（**2026-11-12 官方校准：v0.10.19 起 JSON 清单不再被接受，不是"过时"而是直接报错；`moon fmt` 保留迁移入口**）
 - **模块/包名避免连字符**：连字符会破坏黑盒测试的自动 `@别名`（报 "package X is not imported"），显式自导入又触发 Import loop——实测解法是模块名去掉连字符（2026-11-03 roaring-mbt 试跑实证）
 - agent 自动化脚本用 `.mbtx` 扩展名（agent 专属约定）
 - 文档内嵌代码块用 `.mbt.md`，`moon check` 可检查其中代码
 - 测试与实现同包：`xxx.mbt` + `xxx_test.mbt`（黑盒，经 `@pkg` 访问）+ `xxx_wbtest.mbt`（白盒，包内直访）
 - **公开定义不能依赖 priv 类型**：pub struct 引用内部枚举/结构体时，字段加 `priv` 前缀：`pub struct R { priv inner : Inner }`
 - **查 API 的权威文件**：`~/.moon/lib/core/builtin/pkg.generated.mbti`（全量类型+方法签名，grep 它比猜转换函数名快）
-- **位重解释转换**：整型间按位重解释用 `reinterpret_as_*`（如 Int→UInt32 是 `.reinterpret_as_uint()`）；`to_uint()` 一类静默截断转换已弃用，出 deprecated 警告
+- **位重解释转换**：整型间按位重解释用 `reinterpret_as_*`（实测 `Int32::reinterpret_as_uint -> UInt32`、`Double::reinterpret_as_uint64 -> UInt64`）；`to_uint()` 是**数值转换**（可能截断），位级场景勿混用。**2026-11-12 校准**：core 源码与 .mbti 均无 deprecated 标注且 builtin 内部仍在使用，原"已弃用、出 deprecated 警告"的说法无实证支持，已撤
 - **跨包调用**：非根包使用须在 moon.pkg 的 `import {}` 声明；黑盒测试自动导入自身包仅对无连字符包名生效
 
 ## 生态可用库（S3 查证起点，非完整清单）
 
 - `moonbitlang/core`：官方标准库（勿手写它已有的）
-- `moonbitlang/async`：异步/网络（HTTP/TCP/WebSocket/进程）
+- `moonbitlang/async`：异步/网络（HTTP/TCP/WebSocket/进程）——**官方 v0.10.19 起新增 `moonbitlang/core/async`（实验性，`moon.pkg` 需 `allow-experimental-packages = true`），官方路线是逐步废弃 `moonbitlang/async`；既有 17 项目仍用旧包且回归全绿，新项目优先评估 core/async**
+- `moonbitlang/core/path`、`core/compress`、`core/archive/zip`、`core/json`：v0.10.19 新增/迁移的官方标准库包（Json 与 ToJson 已由内置迁至 core/json，`a.to_json()` 形式移除）
 - `moonbitlang/ulex` + `ulex-runtime`：词法分析器生成（moonlex）
 - `lyjttio/moongrad`：纯 MoonBit 张量 + autograd（轻量数值场景可考虑）
 - mooncakes.io：包注册中心；引第三方库前必须经 moonbit-orientation 查证 API 真实签名
@@ -268,3 +313,23 @@ test "eval: 2+3=5" {
 - MoonBit 编译快（秒级），`moon check` 循环成本低，可以放开每文件检查
 - 静态类型 + 穷尽 match：很多逻辑错误在 check 阶段即暴露——测试没过先看 check 是否真的零警告
 - 形式化证明能力边界：元组投影、Double、可变结构体字段、logic fn 内 let 等构造 prove 不支持（moonbit-proof-lab 有 40 个探测包可复现）；遇到即降级，不硬磕
+
+## 官方数据校准（2026-11-12，官网 + 本机工具链 + core 元数据三源核验）
+
+**三源**：① 官网 updates 最新条目 **20261105 MoonBit v0.10.19 Release**（JSON 清单不再接受、core/async 上线、moon test 默认并行、moon check 自动生成 .mbti、1.0 前不发布 1.0+ 包）；② 本机 `moon --version` / `moon help` / core `moon.mod`（`moon 0.1.20261104`、`moonc` 与 `core` 均 `v0.10.20+65efd5b93`、flags `rr_moon_mod,rr_moon_pkg`）；③ cli `binaries/latest` 与 `cores/core-latest` 的 Last-Modified 均为 **2026-11-05 09:5x GMT**（11-05 后未更新）→ **本机即官方当前最新通道**。
+
+| 官方数据项 | 核验结论 |
+|---|---|
+| 版本线 | moon 0.1.date（构建系统）与 moonc/core v0.10.x（编译器/标准库）是**同一工具链的两套组件版本号**；原"v0.10.x 正式线不在这条通道、需 moonup"断言已废 |
+| 清单格式 | TOML `moon.mod`/`moon.pkg`；**v0.10.19 起 JSON 清单直接拒绝**；pipeline 原写 `moon.mod.json` 已废 |
+| 权威文档 | `~/.moon/lib/core/AGENTS.md` 有效；`~/.moon/AGENTS.md` 为失效符号链接（指向 moon-pilot 内部文件） |
+| 命令集合 | `moon prove` / `moon ide`（peek-def、find-references）/ `moon explain --diagnostic` 实测存在；新增 `upgrade`、`info`、`testcli`、`coverage`、`doc`、`whoami` 等；**`moon upgrade --dry-run` 不支持** |
+| 测试参数 | `-p` 指定包；**`-f` = `--filter`（测试名过滤），不是文件**；指定文件用位置参数；v0.10.19 起测试包默认并行（`-j N` / `--no-parallelize`） |
+| 证明配置 | 项目实测统一 `proof_enabled = true`（8 处）；`options("proof-enabled": true)` 已废 |
+| API | `String::replace(String, old~ : StringView, new~ : StringView)` ✓（另有 `replace_all`）；UInt 无 `rotate_left` ✓；`reinterpret_as_uint` / `reinterpret_as_uint64` ✓；`@math.ln` / `@math.exp` ✓（Double→Double）；`to_uint` 无 deprecated 标注，是数值转换而非位重解释 |
+| quickcheck | 确在 core 内（`core/quickcheck`）；精确签名见 R19 章节；v0.10.9 起提供 `report`、`Generator::sample`、`shrink` 子包 |
+| 异步生态 | 官方路线：`moonbitlang/core/async`（实验性）→ 逐步废弃 `moonbitlang/async`；既有 17 项目用旧包，回归全绿 |
+| 形式化边界 | Error 4207 / 可证域 Int+div/mod+FixedArray / Double·BigInt·UInt64 位运算禁区：本机 9×prove 全绿维持（工具链版本未变，结论不漂移） |
+| 官网页面滞后 | 官网 download 页展示的 `moon help` 输出为旧版（无 prove/explain/upgrade）——**命令事实以本机 `moon help` 为准** |
+
+**待观察**：官网明示"MoonBit 1.0 前暂不支持发布 1.0+ 版本包"；1.0 发布后须重跑 17 项目全量回归 + moonprobe 边界重标定（ROADMAP 监控项）。

@@ -60,20 +60,19 @@ cd projects/codel-mbt && moon test     # CoDel 伺服判据
 moon prove proofmodel                  # 形式化契约
 ```
 
-环境：MoonBit toolchain（`curl -fsSL https://cli.moonbitlang.com/install/unix.sh | bash`），在 moon 0.1.20261102 与 0.1.20261104 上全量验证 ALL GREEN。
+环境：MoonBit toolchain（`curl -fsSL https://cli.moonbitlang.com/install/unix.sh | bash`），在 moon 0.1.20261102 与 0.1.20261104 上全量验证；2026-11-12 于 moon 0.1.20261104（编译器与标准库 v0.10.20+65efd5b93）复跑 17 项目 ALL GREEN。
 
 ## Provenance 与合规
 
 - **算法出处全标注**：每个项目的 `EXTRACTION.md` 记录论文引用、可转核心、测试判据映射、偏差声明
 - **代码独立实现**：判据引用论文，代码为原创 MoonBit——逐包出处见各项目 `EXTRACTION.md` 与 README 的 Provenance 章节
 - **RFC 类项目**：标注 IETF 开放标准版权条款下的实现许可
-- **AI 角色全程可追溯**：`docs/EVOLUTION.md` 记录 21 轮的每一步——哪些由 AI 生成、哪些决策由人确认、哪些失败被如何诊断
+- **AI 角色全程可追溯**：每一轮的失败、诊断与配方沉淀见 `skill/references/moonbit-context.md`（按轮次章节，R1–R26）
 
 ## 文档
 
 - [`docs/METHODOLOGY.md`](docs/METHODOLOGY.md) — 七阶段流水线与判据哲学详解
-- [`docs/EVOLUTION.md`](docs/EVOLUTION.md) — 21 轮演进史：失败、诊断与配方沉淀
-- [`docs/BACKEND_MATRIX.md`](docs/BACKEND_MATRIX.md) — 四后端差分测试矩阵（10 项目全一致）
+- [`docs/BACKEND_MATRIX.md`](docs/BACKEND_MATRIX.md) — 四后端差分测试矩阵（17 项目，16/17 全一致；lifeguard native-only）
 - [`docs/ROADMAP.md`](docs/ROADMAP.md) — 路线图
 - [`tooling/moonprobe/`](tooling/moonprobe/) — 证明器能力边界探针（升级后一键复检）
 - [`skill/`](skill/) — 可分发的 Agent Skill（SKILL.md + 知识库 + 回归脚本）
