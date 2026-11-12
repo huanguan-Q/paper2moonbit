@@ -131,7 +131,7 @@ test "string API agrees with core over generated texts (T-STR)" {
     for _ in 0..<n {
       // alphabet a..e
       let code = 97 + (rng.next_u64() % 5UL).to_int()
-      buf.write_char(Int::unsafe_to_char(code))
+      buf.write_char(Int32::unsafe_to_char(code))
     }
     let text = buf.to_string()
     let sa = suffix_array(text)

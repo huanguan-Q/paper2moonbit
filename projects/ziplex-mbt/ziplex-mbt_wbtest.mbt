@@ -7,10 +7,7 @@ test "nullable semantics" {
   assert_eq(nullable(RChar('a')), false)
   assert_eq(nullable(mk_star(RChar('a'))), true)
   assert_eq(nullable(mk_concat(RChar('a'), mk_star(RChar('b')))), false)
-  assert_eq(
-    nullable(mk_concat(mk_star(RChar('a')), RChar('b'))),
-    false,
-  ) // a*b needs at least b
+  assert_eq(nullable(mk_concat(mk_star(RChar('a')), RChar('b'))), false) // a*b needs at least b
 }
 
 ///|

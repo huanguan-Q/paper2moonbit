@@ -14,13 +14,13 @@ pub enum Regex {
 }
 
 ///|
-pub extend Regex with Eq::{ equal, not_equal }
+pub extend Regex with Eq::{equal, not_equal}
 
 ///|
-pub extend Regex with Hash::{ hash, hash_combine }
+pub extend Regex with Hash::{hash, hash_combine}
 
 ///|
-pub extend Regex with @debug.Debug::{ to_repr }
+pub extend Regex with @debug.Debug::{to_repr}
 
 ///|
 /// Smart union: flatten nested unions, drop empty branches, dedup structurally.
@@ -28,9 +28,10 @@ fn mk_union(rs : Array[Regex]) -> Regex {
   let out : Array[Regex] = []
   fn go(r : Regex) -> Unit {
     match r {
-      RUnion(inner) => for x in inner {
-        go(x)
-      }
+      RUnion(inner) =>
+        for x in inner {
+          go(x)
+        }
       REmpty => ()
       other => {
         // linear dedup: skip structurally equal duplicates (r | r = r)

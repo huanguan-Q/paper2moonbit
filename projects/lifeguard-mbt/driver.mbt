@@ -7,8 +7,8 @@
 pub struct SimResult {
   all_confirmed_dead : Bool // every live node marked dead_node Failed
   no_false_positive : Bool // no healthy node ever marked Failed anywhere
-  dead_confirmed_by : Int
-  awareness_max_seen : Int
+  dead_confirmed_by : Int32
+  awareness_max_seen : Int32
 }
 
 ///|
@@ -24,13 +24,13 @@ priv struct SimNode {
   node : SwimNode
   inbox : @async.Queue[Envelope]
   // my probes: seq -> acked?
-  pending : @hashmap.HashMap[Int, Bool]
+  pending : @hashmap.HashMap[Int32, Bool]
   // probes I forward for others: seq -> requester
-  fwd : @hashmap.HashMap[Int, String]
+  fwd : @hashmap.HashMap[Int32, String]
   // gossip dedup + independent suspicion origins (per suspected member)
   seen : @hashmap.HashMap[String, Bool]
   votes : @hashmap.HashMap[String, @hashmap.HashMap[String, Bool]]
-  mut awareness_peak : Int
+  mut awareness_peak : Int32
 }
 
 ///|
@@ -38,11 +38,11 @@ priv struct SimNode {
 pub async fn simulate_cluster(
   node_ids~ : Array[String],
   dead_node~ : String,
-  base_probe_interval_ms~ : Int,
-  base_probe_timeout_ms~ : Int,
+  base_probe_interval_ms~ : Int32,
+  base_probe_timeout_ms~ : Int32,
   alpha~ : Double,
   beta~ : Double,
-  budget_ms~ : Int,
+  budget_ms~ : Int32,
 ) -> Result[SimResult, String] {
   let n = node_ids.length()
   if n < 3 {
@@ -50,15 +50,18 @@ pub async fn simulate_cluster(
   }
   let t0 = @async.now()
   let outbox : @async.Queue[Envelope] = @async.Queue(kind=Unbounded)
-  let nodes : @hashmap.HashMap[String, SimNode] = @hashmap.HashMap([], capacity=16)
+  let nodes : @hashmap.HashMap[String, SimNode] = @hashmap.HashMap(
+    [],
+    capacity=16,
+  )
   for id in node_ids {
     let peers = node_ids.filter(fn(p) { p != id })
     let sim : SimNode = {
       node: SwimNode::new(
-        id=id,
-        peers=peers,
-        base_probe_interval_ms=base_probe_interval_ms,
-        base_probe_timeout_ms=base_probe_timeout_ms,
+        id~,
+        peers~,
+        base_probe_interval_ms~,
+        base_probe_timeout_ms~,
         suspicion_alpha=alpha,
         suspicion_beta=beta,
         suspicion_k=3,
@@ -128,7 +131,7 @@ pub async fn simulate_cluster(
   }
   Ok({
     all_confirmed_dead: confirmed == n - 1,
-    no_false_positive: !(false_pos),
+    no_false_positive: !false_pos,
     dead_confirmed_by: confirmed,
     awareness_max_seen: peak,
   })
@@ -143,7 +146,7 @@ fn[T] opt_or(v : T?, d : T) -> T {
 }
 
 ///|
-fn first_n(xs : Array[String], n : Int) -> Array[String] {
+fn first_n(xs : Array[String], n : Int32) -> Array[String] {
   let out : Array[String] = []
   for i in 0..<n {
     if i < xs.length() {
@@ -154,7 +157,7 @@ fn first_n(xs : Array[String], n : Int) -> Array[String] {
 }
 
 ///|
-fn rr_target(sim : SimNode, round : Int) -> String {
+fn rr_target(sim : SimNode, round : Int32) -> String {
   let peers = sim.node.peers
   peers[round % peers.length()]
 }
@@ -167,7 +170,7 @@ fn put(
   from : String,
   msg : Msg,
 ) -> Unit raise {
-  let _ = outbox.try_put({ to, origin, from, msg })
+  let _ = outbox.try_put({ to, origin, from, msg, })
 }
 
 ///|
@@ -216,7 +219,10 @@ fn on_membership(
         match sim.votes.get(about) {
           Some(set) => set.set(org, true)
           None => {
-            let set : @hashmap.HashMap[String, Bool] = @hashmap.HashMap([], capacity=4)
+            let set : @hashmap.HashMap[String, Bool] = @hashmap.HashMap(
+              [],
+              capacity=4,
+            )
             set.set(org, true)
             sim.votes.set(about, set)
           }
@@ -239,9 +245,9 @@ async fn node_loop(
   sim : SimNode,
   outbox : @async.Queue[Envelope],
   t0 : Int64,
-  budget_ms : Int,
-  base_probe_timeout : Int,
-) -> Unit raise {
+  budget_ms : Int32,
+  base_probe_timeout : Int32,
+) -> Unit {
   let mut round = 0
   while @async.now() - t0 < budget_ms.to_int64() {
     // let the round run: drain inbox while the probe timeline advances
@@ -252,20 +258,32 @@ async fn node_loop(
     // direct probe window
     @async.sleep(base_probe_timeout)
     drain(sim, outbox)
-    if !(opt_or(sim.pending.get(seq), false)) {
+    if !opt_or(sim.pending.get(seq), false) {
       sim.node.record_probe_fail()
       // indirect probe: up to 3 helpers
       let helpers = first_n(sim.node.peers.filter(fn(p) { p != target }), 3)
       for h in helpers {
-        put(outbox, h, sim.node.id, sim.node.id, PingReq(sim.node.id, target, seq))
+        put(
+          outbox,
+          h,
+          sim.node.id,
+          sim.node.id,
+          PingReq(sim.node.id, target, seq),
+        )
       }
       @async.sleep(base_probe_timeout)
       drain(sim, outbox)
-      if !(opt_or(sim.pending.get(seq), false)) {
+      if !opt_or(sim.pending.get(seq), false) {
         sim.node.record_missed_nack()
         let inc = opt_or(sim.node.member_incarnation(target), 0UL)
         // mark suspect locally, then flood
-        let _ = on_membership(sim, outbox, sim.node.id, sim.node.id, Suspect(target, inc, sim.node.id))
+        let _ = on_membership(
+          sim,
+          outbox,
+          sim.node.id,
+          sim.node.id,
+          Suspect(target, inc, sim.node.id),
+        )
         // suspicion window (C=0 -> Max at start; decay recorded as simplification)
         let st = sim.node.suspicion_timeout_ms(0)
         let s_deadline = @async.now() + st.to_int64()
@@ -329,7 +347,11 @@ fn drain(sim : SimNode, outbox : @async.Queue[Envelope]) -> Unit raise {
                   target,
                   me,
                   me,
-                  Suspect(target, opt_or(sim.node.member_incarnation(target), 0UL), me),
+                  Suspect(
+                    target,
+                    opt_or(sim.node.member_incarnation(target), 0UL),
+                    me,
+                  ),
                 )
               _ => ()
             }
@@ -346,10 +368,11 @@ fn drain(sim : SimNode, outbox : @async.Queue[Envelope]) -> Unit raise {
               None => ()
             }
           }
-          Nack(_, seq) => match sim.fwd.get(seq) {
-            Some(orig) => put(outbox, orig, me, me, Nack(me, seq))
-            None => ()
-          }
+          Nack(_, seq) =>
+            match sim.fwd.get(seq) {
+              Some(orig) => put(outbox, orig, me, me, Nack(me, seq))
+              None => ()
+            }
           Suspect(_, _, _) | Alive(_, _, _) | Confirm(_, _, _) => {
             let _ = on_membership(sim, outbox, env.origin, env.from, env.msg)
           }

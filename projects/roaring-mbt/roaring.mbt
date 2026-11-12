@@ -2,17 +2,17 @@
 /// Roaring bitmap over the 32-bit domain (arXiv:1603.06549 core subset).
 /// Exact membership: no false positives or false negatives.
 pub struct Roaring {
-  priv keys : Array[Int]
+  priv keys : Array[Int32]
   priv containers : Array[Container]
 }
 
 ///|
 pub fn Roaring::new() -> Roaring {
-  { keys: [], containers: [] }
+  { keys: [], containers: [], }
 }
 
 ///|
-fn container_contains(c : Container, v : Int) -> Bool {
+fn container_contains(c : Container, v : Int32) -> Bool {
   match c {
     Arr(a) => a.contains(v)
     Bmp(b) => b.contains(v)
@@ -21,7 +21,7 @@ fn container_contains(c : Container, v : Int) -> Bool {
 
 ///|
 /// Split a 32-bit value into high key and low in-container value.
-fn split(value : UInt32) -> (Int, Int) {
+fn split(value : UInt32) -> (Int32, Int32) {
   ((value >> 16).reinterpret_as_int(), (value & 0xFFFFU).reinterpret_as_int())
 }
 
@@ -42,12 +42,11 @@ pub fn Roaring::add(self : Roaring, value : UInt32) -> Unit {
   let i = binary_search(self.keys, hi)
   if i >= 0 {
     match self.containers[i] {
-      Arr(a) => {
+      Arr(a) =>
         if a.add(lo) && a.vals.length() > threshold {
           // 4097th distinct value: promote to a bitmap container
           self.containers[i] = Bmp(a.to_bitmap())
         }
-      }
       Bmp(b) => {
         let _ = b.add(lo)
       }
@@ -68,13 +67,12 @@ pub fn Roaring::remove(self : Roaring, value : UInt32) -> Unit {
   let i = binary_search(self.keys, hi)
   if i >= 0 {
     match self.containers[i] {
-      Arr(a) => {
+      Arr(a) =>
         if a.remove(lo) && a.vals.is_empty() {
           remove_at(self.keys, i)
           remove_at(self.containers, i)
         }
-      }
-      Bmp(b) => {
+      Bmp(b) =>
         if b.remove(lo) {
           if b.cardinality == 0 {
             remove_at(self.keys, i)
@@ -84,7 +82,6 @@ pub fn Roaring::remove(self : Roaring, value : UInt32) -> Unit {
             self.containers[i] = Arr(b.to_array())
           }
         }
-      }
     }
   }
 }

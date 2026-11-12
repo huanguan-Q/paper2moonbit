@@ -8,21 +8,28 @@
 /// Position (1-based) of the least significant 1-bit of x, scanning up to
 /// `bits` bits; returns bits+1 when x has no set bit in range.
 /// Paper role: the rho function of HyperLogLog.
-pub fn rho(x0 : Int, bits : Int) -> Int where {
+pub fn rho(
+  x0 : Int32,
+  bits : Int32,
+) -> Int32 where {
   proof_require: x0 >= 0,
   proof_require: bits > 0,
   proof_ensure: r => r >= 1 && r <= bits + 1,
 } {
   let mut result = bits + 1
   let mut x = x0
-  for i in 1..=bits {
+  for i in 1..<=bits {
     if x % 2 == 1 {
       result = i
       break
     }
     x = x / 2
   } where {
-    proof_invariant: i >= 1 && i <= bits + 1 && result >= 1 && result <= bits + 1 && x >= 0,
+    proof_invariant: i >= 1 &&
+    i <= bits + 1 &&
+    result >= 1 &&
+    result <= bits + 1 &&
+    x >= 0,
   }
   result
 }
@@ -31,7 +38,11 @@ pub fn rho(x0 : Int, bits : Int) -> Int where {
 /// Register update: monotonically non-decreasing (paper property — a register
 /// never forgets an observed rho value). Takes the freshly computed rho value
 /// and folds it into the register.
-pub fn update_reg(prev : Int, v : Int, bits : Int) -> Int where {
+pub fn update_reg(
+  prev : Int32,
+  v : Int32,
+  bits : Int32,
+) -> Int32 where {
   proof_require: prev >= 0,
   proof_require: prev <= bits + 1,
   proof_require: v >= 1,
@@ -47,7 +58,10 @@ pub fn update_reg(prev : Int, v : Int, bits : Int) -> Int where {
 
 ///|
 /// Register index derived from the low part of a hash value.
-pub fn register_of(hash : Int, m : Int) -> Int where {
+pub fn register_of(
+  hash : Int32,
+  m : Int32,
+) -> Int32 where {
   proof_require: m > 0,
   proof_require: hash >= 0,
   proof_ensure: r => r >= 0 && r < m,

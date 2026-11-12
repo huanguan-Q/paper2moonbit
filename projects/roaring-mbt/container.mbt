@@ -1,19 +1,19 @@
 ///|
 /// Threshold from arXiv:1603.06549: containers with at most 4096 values use
 /// sorted arrays; denser ones use 1024x64-bit bitmaps.
-let threshold : Int = 4096
+let threshold : Int32 = 4096
 
 ///|
 /// Sorted packed array container. vals is strictly increasing, values in 0..65535.
 priv struct ArrayContainer {
-  vals : Array[Int]
+  vals : Array[Int32]
 }
 
 ///|
 /// Bitmap container: 1024 UInt64 words covering the full 16-bit range.
 priv struct BitmapContainer {
   words : FixedArray[UInt64]
-  mut cardinality : Int
+  mut cardinality : Int32
 }
 
 ///|
@@ -25,7 +25,7 @@ priv enum Container {
 ///|
 /// Binary search over a sorted array. Returns the index if found, otherwise
 /// -(insertion_point + 1).
-fn binary_search(arr : Array[Int], target : Int) -> Int {
+fn binary_search(arr : Array[Int32], target : Int32) -> Int32 {
   let mut lo = 0
   let mut hi = arr.length()
   while lo < hi {
@@ -45,7 +45,7 @@ fn binary_search(arr : Array[Int], target : Int) -> Int {
 
 ///|
 /// Insert v at pos, shifting the tail right.
-fn[T] insert_at(arr : Array[T], pos : Int, v : T) -> Unit {
+fn[T] insert_at(arr : Array[T], pos : Int32, v : T) -> Unit {
   arr.push(v)
   let mut i = arr.length() - 1
   while i > pos {
@@ -57,7 +57,7 @@ fn[T] insert_at(arr : Array[T], pos : Int, v : T) -> Unit {
 
 ///|
 /// Remove the element at pos, shifting the tail left.
-fn[T] remove_at(arr : Array[T], pos : Int) -> Unit {
+fn[T] remove_at(arr : Array[T], pos : Int32) -> Unit {
   let n = arr.length()
   let mut i = pos
   while i < n - 1 {
@@ -69,17 +69,17 @@ fn[T] remove_at(arr : Array[T], pos : Int) -> Unit {
 
 ///|
 fn ArrayContainer::new() -> ArrayContainer {
-  { vals: [] }
+  { vals: [], }
 }
 
 ///|
-fn ArrayContainer::contains(self : ArrayContainer, v : Int) -> Bool {
+fn ArrayContainer::contains(self : ArrayContainer, v : Int32) -> Bool {
   binary_search(self.vals, v) >= 0
 }
 
 ///|
 /// Add v; returns true if it was not present before.
-fn ArrayContainer::add(self : ArrayContainer, v : Int) -> Bool {
+fn ArrayContainer::add(self : ArrayContainer, v : Int32) -> Bool {
   let i = binary_search(self.vals, v)
   if i >= 0 {
     false
@@ -91,7 +91,7 @@ fn ArrayContainer::add(self : ArrayContainer, v : Int) -> Bool {
 
 ///|
 /// Remove v; returns true if it was present.
-fn ArrayContainer::remove(self : ArrayContainer, v : Int) -> Bool {
+fn ArrayContainer::remove(self : ArrayContainer, v : Int32) -> Bool {
   let i = binary_search(self.vals, v)
   if i >= 0 {
     remove_at(self.vals, i)
@@ -103,17 +103,17 @@ fn ArrayContainer::remove(self : ArrayContainer, v : Int) -> Bool {
 
 ///|
 fn BitmapContainer::new() -> BitmapContainer {
-  { words: FixedArray::make(1024, 0UL), cardinality: 0 }
+  { words: FixedArray::make(1024, 0UL), cardinality: 0, }
 }
 
 ///|
-fn BitmapContainer::contains(self : BitmapContainer, v : Int) -> Bool {
+fn BitmapContainer::contains(self : BitmapContainer, v : Int32) -> Bool {
   (self.words[v >> 6] & (1UL << (v & 63))) != 0UL
 }
 
 ///|
 /// Add v; returns true if it was not present before.
-fn BitmapContainer::add(self : BitmapContainer, v : Int) -> Bool {
+fn BitmapContainer::add(self : BitmapContainer, v : Int32) -> Bool {
   let w = v >> 6
   let bit = 1UL << (v & 63)
   if (self.words[w] & bit) != 0UL {
@@ -127,7 +127,7 @@ fn BitmapContainer::add(self : BitmapContainer, v : Int) -> Bool {
 
 ///|
 /// Remove v; returns true if it was present.
-fn BitmapContainer::remove(self : BitmapContainer, v : Int) -> Bool {
+fn BitmapContainer::remove(self : BitmapContainer, v : Int32) -> Bool {
   let w = v >> 6
   let bit = 1UL << (v & 63)
   if (self.words[w] & bit) != 0UL {

@@ -19,7 +19,12 @@ repository = "github.com/huanguan-Q/paper2moonbit"
 
 license = "Apache-2.0"
 
-keywords = [ "cardinality-estimation", "loglog", "hyperloglog", "probabilistic" ]
+keywords = [
+  "cardinality-estimation",
+  "loglog",
+  "hyperloglog",
+  "probabilistic",
+]
 
 preferred_target = "wasm"
 

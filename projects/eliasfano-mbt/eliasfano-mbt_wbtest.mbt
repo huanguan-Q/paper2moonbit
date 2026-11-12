@@ -12,7 +12,7 @@ fn lcg_next(seed : Ref[UInt64]) -> UInt64 {
 
 ///|
 /// Build a non-decreasing sequence of n values in [0, u] with roughly even spread.
-fn gen_monotone(n : Int, upper : UInt64, seed : UInt64) -> Array[UInt64] {
+fn gen_monotone(n : Int32, upper : UInt64, seed : UInt64) -> Array[UInt64] {
   let rng = Ref(seed)
   let xs : Array[UInt64] = []
   let mut cur : UInt64 = 0UL
@@ -49,8 +49,11 @@ test "paper space bound: total bits <= n*l + 2n + 2" {
   // l = floor(log2(u/n)) implies u/2^l < 2n, and high(x[n-1]) <= u >> l,
   // so upper_bits = high_last + n + 1 < 2n + n + 1; conservatively check the
   // classic quasi-succinct budget n*l + 2n + O(1) on even-spread sequences.
-  let shapes : Array[(Int, UInt64)] = [
-    (1000, 1100UL), (1000, 60000UL), (1000, 1UL << 32), (300, 1UL << 60),
+  let shapes : Array[(Int32, UInt64)] = [
+    (1000, 1100UL),
+    (1000, 60000UL),
+    (1000, 1UL << 32),
+    (300, 1UL << 60),
   ]
   for shape in shapes {
     let (n, u) = shape

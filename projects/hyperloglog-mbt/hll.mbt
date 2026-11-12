@@ -6,7 +6,7 @@
 
 ///|
 /// Runtime rho for UInt64 remainder bits (LSB-first scan, see BLUEPRINT).
-fn rho_u64(w : UInt64, bits : Int) -> Int {
+fn rho_u64(w : UInt64, bits : Int32) -> Int32 {
   let mut result = bits + 1
   let mut x = w
   let mut i = 1
@@ -23,28 +23,23 @@ fn rho_u64(w : UInt64, bits : Int) -> Int {
 
 ///|
 pub struct HLL {
-  priv p : Int // registers indexed by low p bits; m = 2^p
-  priv m : Int
-  priv registers : FixedArray[Int]
+  priv p : Int32 // registers indexed by low p bits; m = 2^p
+  priv m : Int32
+  priv registers : FixedArray[Int32]
   priv alpha_m : Double
 }
 
 ///|
 /// Create a HyperLogLog with m = 2^p registers (paper recommends p in 4..=16).
-pub fn HLL::new(p : Int) -> HLL {
+pub fn HLL::new(p : Int32) -> HLL {
   let m = 1 << p // p <= 16, no overflow
   // alpha_m = 0.7213 / (1 + 1.079/m)  (paper Section 4)
   let alpha = 0.7213 / (1.0 + 1.079 / m.to_double())
-  {
-    p,
-    m,
-    registers: FixedArray::make(m, 0),
-    alpha_m: alpha,
-  }
+  { p, m, registers: FixedArray::make(m, 0), alpha_m: alpha, }
 }
 
 ///|
-pub fn HLL::register_value(self : HLL, j : Int) -> Int {
+pub fn HLL::register_value(self : HLL, j : Int32) -> Int32 {
   self.registers[j]
 }
 
@@ -65,7 +60,7 @@ pub fn HLL::add(self : HLL, hash : UInt64) -> Unit {
 /// small-range correction switches to linear counting m*ln(m/V).
 pub fn HLL::count(self : HLL) -> Double {
   let mut sum : Double = 0.0
-  let mut empty : Int = 0
+  let mut empty : Int32 = 0
   for j in 0..<self.m {
     let v = self.registers[j]
     sum += pow2neg(v)
@@ -84,7 +79,7 @@ pub fn HLL::count(self : HLL) -> Double {
 
 ///|
 /// 2^(-v) for v >= 1 without @math.pow (plain repeated halving).
-fn pow2neg(v : Int) -> Double {
+fn pow2neg(v : Int32) -> Double {
   let mut r = 1.0
   for _ in 0..<v {
     r = r / 2.0
@@ -93,6 +88,6 @@ fn pow2neg(v : Int) -> Double {
 }
 
 ///|
-pub fn HLL::num_registers(self : HLL) -> Int {
+pub fn HLL::num_registers(self : HLL) -> Int32 {
   self.m
 }

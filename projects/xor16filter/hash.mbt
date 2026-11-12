@@ -12,7 +12,7 @@ pub fn murmur64(h : UInt64) -> UInt64 {
 
 ///|
 /// Rotate-left for 64-bit values. c must be in 1..=63.
-pub fn rotl64(n : UInt64, c : Int) -> UInt64 {
+pub fn rotl64(n : UInt64, c : Int32) -> UInt64 {
   (n << c) | (n >> (64 - c))
 }
 
@@ -25,7 +25,7 @@ pub fn low32(h : UInt64) -> UInt64 {
 ///|
 /// Fast modulo reduction: (hash * n) >> 32, result in 0..<n.
 /// hash must already be a 32-bit value (see low32). Reference: xor_reduce.
-pub fn reduce(hash : UInt64, n : Int) -> Int {
+pub fn reduce(hash : UInt64, n : Int32) -> Int32 {
   ((hash * n.to_uint64()) >> 32).to_int()
 }
 

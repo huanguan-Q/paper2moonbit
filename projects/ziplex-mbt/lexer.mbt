@@ -11,7 +11,7 @@ pub struct Rule {
 ///|
 /// Construct a rule (priority = position in the rule list).
 pub fn Rule::new(name : String, re : Regex) -> Rule {
-  Rule::{ name, re }
+  Rule::{ name, re, }
 }
 
 ///|
@@ -99,9 +99,10 @@ pub fn lex(rules : Array[Rule], input : String) -> Result[Array[Token], String] 
     if best_len == 0 {
       return Err("lex error at offset \{pos}: rule matched empty string")
     }
-    tokens.push(
-      Token::{ rule: rules[best_rule].name, lexeme: input[pos:pos + best_len].to_owned() },
-    )
+    tokens.push(Token::{
+      rule: rules[best_rule].name,
+      lexeme: input[pos:pos + best_len].to_owned(),
+    })
     pos += best_len
   }
   Ok(tokens)

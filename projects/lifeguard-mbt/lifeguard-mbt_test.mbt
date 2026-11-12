@@ -97,14 +97,12 @@ test "SWIM: a node refutes suspicion about itself" {
   let n = mk_node()
   let out = n.handle(@lifeguard.Suspect("n1", 0UL, "n3"))
   // n1 refutes: emits Alive(n1, inc+1)
-  let refute = out.filter(
-    fn(m) {
-      match m {
-        @lifeguard.Alive("n1", inc, "n1") => inc == 1UL
-        _ => false
-      }
-    },
-  )
+  let refute = out.filter(fn(m) {
+    match m {
+      @lifeguard.Alive("n1", inc, "n1") => inc == 1UL
+      _ => false
+    }
+  })
   assert_eq(refute.length(), 1)
   assert_eq(n.self_incarnation(), 1UL)
   // refuting costs +1 awareness

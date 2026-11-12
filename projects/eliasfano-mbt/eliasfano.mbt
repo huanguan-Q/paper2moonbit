@@ -1,8 +1,8 @@
 ///|
 /// Elias-Fano encoded monotone sequence (arXiv:1206.4300).
 struct EliasFano {
-  n : Int
-  l : Int
+  n : Int32
+  l : Int32
   lower : BitVec
   upper : BitVec
 }
@@ -10,9 +10,9 @@ struct EliasFano {
 ///|
 /// floor(log2(q)) for q >= 1; 0 for q = 0.
 /// Guard l < 63: wasm shifts wrap mod 64, so q >> 64 would loop forever.
-fn floor_log2(q : UInt64) -> Int {
-  let mut l : Int = 0
-  while l < 63 && (q >> (l + 1)) > 0UL {
+fn floor_log2(q : UInt64) -> Int32 {
+  let mut l : Int32 = 0
+  while l < 63 && q >> (l + 1) > 0UL {
     l += 1
   }
   l
@@ -30,9 +30,12 @@ pub fn build(xs : Array[UInt64]) -> Result[EliasFano, String] {
     }
   }
   if n == 0 {
-    return Ok(
-      EliasFano::{ n: 0, l: 0, lower: BitVec::new_zero(0), upper: BitVec::new_zero(1) },
-    )
+    return Ok(EliasFano::{
+      n: 0,
+      l: 0,
+      lower: BitVec::new_zero(0),
+      upper: BitVec::new_zero(1),
+    })
   }
   let u = xs[n - 1]
   let n_u = n.to_uint64()
@@ -47,7 +50,7 @@ pub fn build(xs : Array[UInt64]) -> Result[EliasFano, String] {
     upper.set_bit(high + i)
     lower.write_field(i * l, l, x & mask64(l))
   }
-  Ok(EliasFano::{ n, l, lower, upper })
+  Ok(EliasFano::{ n, l, lower, upper, })
 }
 
 ///|
@@ -60,24 +63,24 @@ pub fn build_ok(xs : Array[UInt64]) -> EliasFano {
 }
 
 ///|
-pub fn EliasFano::length(self : EliasFano) -> Int {
+pub fn EliasFano::length(self : EliasFano) -> Int32 {
   self.n
 }
 
 ///|
-pub fn EliasFano::lower_bits(self : EliasFano) -> Int {
+pub fn EliasFano::lower_bits(self : EliasFano) -> Int32 {
   self.l
 }
 
 ///|
 /// Total encoded bits (lower + upper), the paper's space measure.
-pub fn EliasFano::total_bits(self : EliasFano) -> Int {
+pub fn EliasFano::total_bits(self : EliasFano) -> Int32 {
   self.lower.words.length() * 64 + self.upper.words.length() * 64
 }
 
 ///|
 /// Random access: i-th smallest element. O(n/64) due to linear select.
-pub fn EliasFano::get(self : EliasFano, i : Int) -> UInt64 {
+pub fn EliasFano::get(self : EliasFano, i : Int32) -> UInt64 {
   if i < 0 || i >= self.n {
     abort("EliasFano::get index \{i} out of range [0, \{self.n})")
   }
@@ -86,13 +89,13 @@ pub fn EliasFano::get(self : EliasFano, i : Int) -> UInt64 {
 
 ///|
 /// Successor query: first element >= x, or None. Binary search over get.
-pub fn EliasFano::next_ge(self : EliasFano, x : UInt64) -> Option[UInt64] {
+pub fn EliasFano::next_ge(self : EliasFano, x : UInt64) -> UInt64? {
   if self.n == 0 || x > self.get_unchecked(self.n - 1) {
     return None
   }
   // lower_bound: first i with get(i) >= x
-  let mut lo : Int = 0
-  let mut hi : Int = self.n // invariant: get(hi) >= x
+  let mut lo : Int32 = 0
+  let mut hi : Int32 = self.n // invariant: get(hi) >= x
   while lo < hi {
     let mid = (lo + hi) / 2
     if self.get_unchecked(mid) >= x {
@@ -106,7 +109,7 @@ pub fn EliasFano::next_ge(self : EliasFano, x : UInt64) -> Option[UInt64] {
 
 ///|
 /// get with caller-guaranteed in-range index.
-fn EliasFano::get_unchecked(self : EliasFano, i : Int) -> UInt64 {
+fn EliasFano::get_unchecked(self : EliasFano, i : Int32) -> UInt64 {
   let pos = self.upper.select1(i)
   let high = (pos - i).to_uint64()
   let low = self.lower.read_field(i * self.l, self.l)

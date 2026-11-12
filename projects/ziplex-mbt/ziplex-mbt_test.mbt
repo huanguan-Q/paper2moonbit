@@ -6,7 +6,10 @@
 fn demo_rules() -> Array[@ziplex.Rule] {
   let letter = @ziplex.range('a', 'z')
   [
-    @ziplex.Rule::new("KW", @ziplex.alt([@ziplex.str("let"), @ziplex.str("if")])),
+    @ziplex.Rule::new(
+      "KW",
+      @ziplex.alt([@ziplex.str("let"), @ziplex.str("if")]),
+    ),
     @ziplex.Rule::new("IDENT", @ziplex.plus(letter)),
     @ziplex.Rule::new("NUMBER", @ziplex.plus(@ziplex.range('0', '9'))),
     @ziplex.Rule::new("PUNCT", @ziplex.chars("=+(){}:")),
@@ -66,8 +69,8 @@ test "token stream: mini program text" {
 ///|
 test "invertibility: print(lex(s)) == s (paper core guarantee)" {
   let inputs : Array[String] = [
-    "let x = foo123 + bar\nif (y) { z }", "  let  x0=1\t\nif x2 then x3",
-    "a+b+c\n\n\td", "letletif iflet 007zz",
+    "let x = foo123 + bar\nif (y) { z }", "  let  x0=1\t\nif x2 then x3", "a+b+c\n\n\td",
+    "letletif iflet 007zz",
   ]
   for s in inputs {
     let toks = match @ziplex.lex(demo_rules(), s) {
@@ -92,7 +95,13 @@ test "lexing error: uncovered character" {
 
 ///|
 test "edge cases: empty input, whitespace-only, single char" {
-  assert_eq(match @ziplex.lex(demo_rules(), "") { Ok(t) => t.length(); Err(_) => -1 }, 0)
+  assert_eq(
+    match @ziplex.lex(demo_rules(), "") {
+      Ok(t) => t.length()
+      Err(_) => -1
+    },
+    0,
+  )
   let ws = match @ziplex.lex(demo_rules(), " \n\t ") {
     Ok(t) => t
     Err(msg) => abort("lex failed: \{msg}")
@@ -116,7 +125,10 @@ test "JSON-shape lexing (paper evaluation scenario)" {
     @ziplex.Rule::new("NUMBER", @ziplex.plus(@ziplex.range('0', '9'))),
     @ziplex.Rule::new(
       "STRING",
-      @ziplex.concat(@ziplex.str("\""), @ziplex.concat(@ziplex.plus(@ziplex.chars("abc")), @ziplex.str("\""))),
+      @ziplex.concat(
+        @ziplex.str("\""),
+        @ziplex.concat(@ziplex.plus(@ziplex.chars("abc")), @ziplex.str("\"")),
+      ),
     ),
     @ziplex.Rule::new("WS", @ziplex.chars(" ")),
   ]

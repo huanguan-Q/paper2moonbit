@@ -24,4 +24,3 @@ keywords = [ "consistent-hashing", "distributed", "hashing" ]
 preferred_target = "wasm"
 
 description = "Consistent hashing as a ranged hash family (Karger et al., STOC 1997), closest-point construction with replication."
-

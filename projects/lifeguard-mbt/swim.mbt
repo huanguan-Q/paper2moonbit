@@ -12,25 +12,29 @@ pub(all) enum MemberState {
 }
 
 ///|
-pub extend MemberState with Eq::{ equal, not_equal }
-pub extend MemberState with @debug.Debug::{ to_repr }
+pub extend MemberState with Eq::{equal, not_equal}
+
+///|
+pub extend MemberState with @debug.Debug::{to_repr}
 
 ///|
 /// Protocol messages (paper Sections III/IV).
 #derive(Eq, @debug.Debug)
 pub(all) enum Msg {
-  Ping(String, Int) // from, probe seq
-  Ack(String, Int) // from, probe seq
-  PingReq(String, String, Int) // from, target, probe seq
-  Nack(String, Int) // from, probe seq
+  Ping(String, Int32) // from, probe seq
+  Ack(String, Int32) // from, probe seq
+  PingReq(String, String, Int32) // from, target, probe seq
+  Nack(String, Int32) // from, probe seq
   Suspect(String, UInt64, String) // about, incarnation, originator
   Alive(String, UInt64, String) // about, incarnation, originator
   Confirm(String, UInt64, String) // about, incarnation, originator
 }
 
 ///|
-pub extend Msg with Eq::{ equal, not_equal }
-pub extend Msg with @debug.Debug::{ to_repr }
+pub extend Msg with Eq::{equal, not_equal}
+
+///|
+pub extend Msg with @debug.Debug::{to_repr}
 
 ///|
 priv struct Member {
@@ -43,14 +47,14 @@ pub struct SwimNode {
   priv id : String
   priv peers : Array[String]
   priv members : @hashmap.HashMap[String, Member]
-  priv mut awareness : Int
-  priv max_awareness : Int
-  priv base_probe_interval_ms : Int
-  priv base_probe_timeout_ms : Int
+  priv mut awareness : Int32
+  priv max_awareness : Int32
+  priv base_probe_interval_ms : Int32
+  priv base_probe_timeout_ms : Int32
   priv suspicion_alpha : Double
   priv suspicion_beta : Double
-  priv suspicion_k : Int
-  priv mut next_seq : Int
+  priv suspicion_k : Int32
+  priv mut next_seq : Int32
   priv mut ever_failed_healthy_flag : Bool
 }
 
@@ -59,16 +63,19 @@ pub struct SwimNode {
 pub fn SwimNode::new(
   id~ : String,
   peers~ : Array[String],
-  base_probe_interval_ms~ : Int,
-  base_probe_timeout_ms~ : Int,
+  base_probe_interval_ms~ : Int32,
+  base_probe_timeout_ms~ : Int32,
   suspicion_alpha~ : Double,
   suspicion_beta~ : Double,
-  suspicion_k~ : Int,
-  max_awareness~ : Int,
+  suspicion_k~ : Int32,
+  max_awareness~ : Int32,
 ) -> SwimNode {
-  let members : @hashmap.HashMap[String, Member] = @hashmap.HashMap([], capacity=16)
+  let members : @hashmap.HashMap[String, Member] = @hashmap.HashMap(
+    [],
+    capacity=16,
+  )
   for p in peers {
-    members.set(p, { incarnation: 0UL, state: Alive })
+    members.set(p, { incarnation: 0UL, state: Alive, })
   }
   {
     id,
@@ -88,12 +95,12 @@ pub fn SwimNode::new(
 
 ///|
 /// Local Health Awareness counter (paper: saturated 0..S, S=8).
-pub fn SwimNode::awareness(self : SwimNode) -> Int {
+pub fn SwimNode::awareness(self : SwimNode) -> Int32 {
   self.awareness
 }
 
 ///|
-fn SwimNode::bump(self : SwimNode, d : Int) -> Unit {
+fn SwimNode::bump(self : SwimNode, d : Int32) -> Unit {
   let v = self.awareness + d
   self.awareness = if v < 0 {
     0
@@ -133,7 +140,7 @@ pub fn SwimNode::self_incarnation(self : SwimNode) -> UInt64 {
 }
 
 ///|
-fn SwimNode::take_seq(self : SwimNode) -> Int {
+fn SwimNode::take_seq(self : SwimNode) -> Int32 {
   let s = self.next_seq
   self.next_seq = s + 1
   s
@@ -141,35 +148,39 @@ fn SwimNode::take_seq(self : SwimNode) -> Int {
 
 ///|
 /// ProbeInterval = Base * (LHM+1); ProbeTimeout likewise.
-pub fn SwimNode::probe_interval_ms(self : SwimNode) -> Int {
+pub fn SwimNode::probe_interval_ms(self : SwimNode) -> Int32 {
   self.base_probe_interval_ms * (self.awareness + 1)
 }
 
 ///|
-pub fn SwimNode::probe_timeout_ms(self : SwimNode) -> Int {
+pub fn SwimNode::probe_timeout_ms(self : SwimNode) -> Int32 {
   self.base_probe_timeout_ms * (self.awareness + 1)
 }
 
 ///|
 /// Min = alpha * log10(n) * ProbeInterval, n = total member count.
-pub fn SwimNode::suspicion_min_ms(self : SwimNode) -> Int {
+pub fn SwimNode::suspicion_min_ms(self : SwimNode) -> Int32 {
   let n = (self.peers.length() + 1).to_double()
-  let v = self.suspicion_alpha * @math.log10(n) * self.probe_interval_ms().to_double()
+  let v = self.suspicion_alpha *
+    @math.log10(n) *
+    self.probe_interval_ms().to_double()
   v.to_int()
 }
 
 ///|
 /// SuspicionTimeout = max(Min, Max - (Max-Min) * ln(C+1)/ln(K+1)).
 /// C = independent suspect messages received since local suspicion began.
-pub fn SwimNode::suspicion_timeout_ms(self : SwimNode, independent_count : Int) -> Int {
+pub fn SwimNode::suspicion_timeout_ms(
+  self : SwimNode,
+  independent_count : Int32,
+) -> Int32 {
   let min = self.suspicion_min_ms()
   let max = (self.suspicion_beta * min.to_double()).to_int()
   if independent_count >= self.suspicion_k {
     return min
   }
-  let decay = @math.ln((independent_count + 1).to_double()) / @math.ln(
-      (self.suspicion_k + 1).to_double(),
-    )
+  let decay = @math.ln((independent_count + 1).to_double()) /
+    @math.ln((self.suspicion_k + 1).to_double())
   let t = max.to_double() - (max - min).to_double() * decay
   let ti = t.to_int()
   if ti < min {
@@ -180,12 +191,12 @@ pub fn SwimNode::suspicion_timeout_ms(self : SwimNode, independent_count : Int) 
 }
 
 ///|
-pub fn SwimNode::member_state(self : SwimNode, id : String) -> Option[MemberState] {
+pub fn SwimNode::member_state(self : SwimNode, id : String) -> MemberState? {
   self.members.get(id).map(fn(m) { m.state })
 }
 
 ///|
-pub fn SwimNode::member_incarnation(self : SwimNode, id : String) -> Option[UInt64] {
+pub fn SwimNode::member_incarnation(self : SwimNode, id : String) -> UInt64? {
   self.members.get(id).map(fn(m) { m.incarnation })
 }
 
@@ -196,7 +207,7 @@ pub fn SwimNode::ever_failed_healthy(self : SwimNode) -> Bool {
 
 ///|
 /// Next probe sequence number for starting a new probe round.
-pub fn SwimNode::start_probe(self : SwimNode) -> Int {
+pub fn SwimNode::start_probe(self : SwimNode) -> Int32 {
   self.take_seq()
 }
 
@@ -211,7 +222,7 @@ pub fn SwimNode::handle(self : SwimNode, msg : Msg) -> Array[Msg] {
         // I am suspected: refute with incarnation+1 (paper IV-C)
         let mine = self.self_incarnation()
         if inc >= mine {
-          self.members.set(self.id, { incarnation: mine + 1UL, state: Alive })
+          self.members.set(self.id, { incarnation: mine + 1UL, state: Alive, })
           self.record_refute()
           out.push(Alive(self.id, mine + 1UL, self.id))
         }
@@ -219,7 +230,10 @@ pub fn SwimNode::handle(self : SwimNode, msg : Msg) -> Array[Msg] {
         match self.members.get(about) {
           Some(m) =>
             if inc >= m.incarnation && m.state == Alive {
-              self.members.set(about, { incarnation: m.incarnation, state: Suspect })
+              self.members.set(about, {
+                incarnation: m.incarnation,
+                state: Suspect,
+              })
               out.push(msg)
             }
           None => ()
@@ -232,7 +246,7 @@ pub fn SwimNode::handle(self : SwimNode, msg : Msg) -> Array[Msg] {
             // only a strictly higher incarnation overrides suspect/alive
             // (the incarnation bump itself can only be minted by `about`)
             if inc > m.incarnation && m.state != Failed {
-              self.members.set(about, { incarnation: inc, state: Alive })
+              self.members.set(about, { incarnation: inc, state: Alive, })
               out.push(msg)
             }
           None => ()
@@ -246,7 +260,10 @@ pub fn SwimNode::handle(self : SwimNode, msg : Msg) -> Array[Msg] {
               if m.state == Alive {
                 self.ever_failed_healthy_flag = true
               }
-              self.members.set(about, { incarnation: m.incarnation, state: Failed })
+              self.members.set(about, {
+                incarnation: m.incarnation,
+                state: Failed,
+              })
               out.push(msg)
             }
           None => ()

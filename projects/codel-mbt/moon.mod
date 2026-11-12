@@ -19,7 +19,7 @@ repository = "github.com/huanguan-Q/paper2moonbit"
 
 license = "Apache-2.0"
 
-keywords = [ ]
+keywords = [ "codel", "aqm", "networking", "rfc8289" ]
 
 preferred_target = "wasm"
 

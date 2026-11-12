@@ -19,7 +19,7 @@ repository = "github.com/huanguan-Q/paper2moonbit"
 
 license = "Apache-2.0"
 
-keywords = [ ]
+keywords = [ "chacha20", "poly1305", "aead", "cryptography" ]
 
 preferred_target = "wasm"
 

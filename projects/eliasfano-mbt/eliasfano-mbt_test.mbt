@@ -10,7 +10,7 @@ fn lcg_next(seed : Ref[UInt64]) -> UInt64 {
 
 ///|
 /// Build a non-decreasing sequence of n values in [0, u] with roughly even spread.
-fn gen_monotone(n : Int, upper : UInt64, seed : UInt64) -> Array[UInt64] {
+fn gen_monotone(n : Int32, upper : UInt64, seed : UInt64) -> Array[UInt64] {
   let rng = Ref(seed)
   let xs : Array[UInt64] = []
   let mut cur : UInt64 = 0UL
@@ -44,7 +44,13 @@ test "l computation: known values" {
 ///|
 test "roundtrip: edge cases" {
   // n = 0
-  assert_eq(match @eliasfano.build([]) { Ok(_) => true; Err(_) => false }, true)
+  assert_eq(
+    match @eliasfano.build([]) {
+      Ok(_) => true
+      Err(_) => false
+    },
+    true,
+  )
   // n = 1
   let one = @eliasfano.build_ok([0UL])
   assert_eq(one.length() == 1 && one.get(0) == 0UL, true)
@@ -62,8 +68,11 @@ test "roundtrip: edge cases" {
 test "roundtrip: random monotone sequences, dense to sparse" {
   let rng = Ref(42UL)
   // (n, u) shapes: dense, mixed, sparse, very sparse
-  let shapes : Array[(Int, UInt64)] = [
-    (1000, 1100UL), (1000, 60000UL), (1000, 1UL << 32), (300, 1UL << 60),
+  let shapes : Array[(Int32, UInt64)] = [
+    (1000, 1100UL),
+    (1000, 60000UL),
+    (1000, 1UL << 32),
+    (300, 1UL << 60),
   ]
   for shape in shapes {
     let (n, u) = shape
@@ -93,7 +102,7 @@ test "next_ge matches linear-scan oracle" {
   for _ in 0..<2000 {
     let q = lcg_next(rng) % (1UL << 31)
     // oracle: first xs[i] >= q
-    let mut expect : Option[UInt64] = None
+    let mut expect : UInt64? = None
     for v in xs {
       if v >= q {
         expect = Some(v)

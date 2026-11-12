@@ -7,7 +7,7 @@ test "member property: assignment always inside the view (QC-MEMBER)" {
   // for any bucket count n (1..32) and any item, assign(item) must be a
   // registered bucket — the ranged-hash definition f^V(i) ∈ V.
   @quickcheck.check(
-    fn(n : Int) -> Bool {
+    fn(n : Int32) -> Bool {
       let buckets = if n < 0 { 1 } else { n % 32 + 1 }
       let h = @chash.RangedHash::new(seed=0x9E37UL, points_per_bucket=8)
       let mut b = 0
@@ -29,7 +29,7 @@ test "smoothness property: adding a bucket only steals for itself (QC-SMOOTH)" {
   // changed assignment must land on the NEW bucket ("item may move from an
   // old bucket to a new bucket, but not from one old bucket to another").
   @quickcheck.check(
-    fn(n : Int) -> Bool {
+    fn(n : Int32) -> Bool {
       let base = if n < 0 { 1 } else { n % 16 + 1 }
       let h = @chash.RangedHash::new(seed=0xD1CEUL, points_per_bucket=8)
       let mut b = 0
@@ -37,12 +37,12 @@ test "smoothness property: adding a bucket only steals for itself (QC-SMOOTH)" {
         h.add_bucket(b)
         b += 1
       }
-      let items : Array[Int] = []
+      let items : Array[Int32] = []
       let rng = @chash.LCG::new(base.to_uint64() * 2654435761UL + 11UL)
       for _ in 0..<200 {
         items.push((rng.next_u64() % 50000UL).to_int())
       }
-      let before : Array[Int] = []
+      let before : Array[Int32] = []
       for item in items {
         before.push(h.assign(item))
       }

@@ -46,7 +46,10 @@ test "small range: linear counting tracks true cardinality" {
   let mut n = 0
   while n < 1000 {
     n += 250
-    let seen : @hashmap.HashMap[UInt64, Bool] = @hashmap.HashMap([], capacity=2048)
+    let seen : @hashmap.HashMap[UInt64, Bool] = @hashmap.HashMap(
+      [],
+      capacity=2048,
+    )
     let h2 = @hyperloglog.HLL::new(10)
     let mut s = seed
     for _ in 0..<n {
@@ -58,7 +61,8 @@ test "small range: linear counting tracks true cardinality" {
       h2.add(v)
     }
     let est = h2.count()
-    let err = (est - seen.length().to_double()).abs() / seen.length().to_double()
+    let err = (est - seen.length().to_double()).abs() /
+      seen.length().to_double()
     // linear counting should track well below 5% at these densities
     assert_eq(err < 0.05, true)
   }
@@ -70,7 +74,10 @@ test "large range: relative error within 3 sigma (1.04/sqrt(m))" {
   let h = @hyperloglog.HLL::new(12)
   let mut seed = 20260101UL
   let n = 100000
-  let seen : @hashmap.HashMap[UInt64, Bool] = @hashmap.HashMap([], capacity=131072)
+  let seen : @hashmap.HashMap[UInt64, Bool] = @hashmap.HashMap(
+    [],
+    capacity=131072,
+  )
   for _ in 0..<n {
     let (_, v) = splitmix64(seed)
     seed = v

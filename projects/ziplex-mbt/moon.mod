@@ -19,7 +19,7 @@ repository = "github.com/huanguan-Q/paper2moonbit"
 
 license = "Apache-2.0"
 
-keywords = []
+keywords = [ "lexer", "lexing", "derivatives", "parsing" ]
 
 preferred_target = "wasm"
 
