@@ -15,7 +15,7 @@ version = "0.1.2"
 
 readme = "README.mbt.md"
 
-repository = ""
+repository = "github.com/huanguan-Q/paper2moonbit"
 
 license = "Apache-2.0"
 
@@ -23,4 +23,4 @@ keywords = [ ]
 
 preferred_target = "wasm"
 
-description = ""
+description = "CoDel controlled-delay active queue management (RFC 8289) with discrete-event servo judgments."

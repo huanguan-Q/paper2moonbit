@@ -1,12 +1,12 @@
 # paper2moonbit — 论文判据驱动的 MoonBit 独立实现工作流
 
 > **用 AI 把研究论文变成可编译、可测试、带形式化验证边界的 MoonBit 开源项目。**
-> 21 轮实测 · 15 类论文领域 · 17 个项目 · 17 个已发布 mooncakes 包 · 100+ 条工具链实证事实 · 四后端差分矩阵全一致
+> 26 轮实测（R1–R26） · 17 类论文领域 · 17 个项目 · 17 个已发布 mooncakes 包 · 100+ 条工具链实证事实 · 四后端差分矩阵 16/17 全一致（lifeguard 为 native-only）
 > 全部实现独立编码，出处全标注，AI 角色全程可追溯。
 
 ## 这是什么
 
-`paper2moonbit` 是一套经过 21 轮真实论文试跑打磨的 **AI 原生开发工作流**（Agent Skill）+ **17 个论文判据驱动的 MoonBit 算法项目**。
+`paper2moonbit` 是一套经过 26 轮真实论文试跑打磨的 **AI 原生开发工作流**（Agent Skill）+ **17 个论文判据驱动的 MoonBit 算法项目**。
 
 输入一篇研究论文（PDF/URL），工作流输出：可编译通过 `moon check` 零警告的实现、以论文定理/测试向量/性质为判据的测试套件、`moon prove` 形式化验证目标，以及一份诚实登记所有偏差的抽取清单。
 
@@ -16,8 +16,8 @@
 
 | 维度 | 数据 |
 |---|---|
-| 论文领域 | 15 类：位图、压缩编码、概率估计、过滤器、词法引擎、成员协议、CRDT、搜索调度 harness、文本压缩管线、有序字典、一致性哈希、概要结构、基数估计家族、浮点补偿算术、系统工程（CoDel）、密码学（ChaCha20/Poly1305）、后缀数组（SA-IS） |
-| 项目 | `projects/` 下 17 个独立 moon 项目，376 个 .mbt 文件 |
+| 论文领域 | 17 类：位图、压缩编码、概率估计、过滤器、词法引擎、成员协议、CRDT、搜索调度 harness、文本压缩管线、有序字典、一致性哈希、概要结构、基数估计家族、浮点补偿算术、系统工程（CoDel）、密码学（ChaCha20/Poly1305）、后缀数组（SA-IS） |
+| 项目 | `projects/` 下 17 个独立 moon 项目，94 个 .mbt 源文件 |
 | 测试 | 90+ 论文判据测试（worked example / 定义性判据 / 朴素 oracle 对拍 / 端到端伺服 / property-based） |
 | 形式化验证 | Int + div/mod + FixedArray 域 20+ 契约证明；Double/BigInt 域不可用定论（阳性对照确认） |
 | 发布 | **17 个** mooncakes.io 公开包（全部项目已发布）：`huanguan-Q/{cms,loglog,xor16filter,roaring,eliasfano,hyperloglog,ziplex,lifeguard,codel,chacha,chash,sais,rqgm,crdt,bwt,skiplist,fpcomp}` |
