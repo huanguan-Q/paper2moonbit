@@ -1,3 +1,1 @@
-import {
-  "moonbitlang/core/bigint",
-}
+// BigInt 由 core prelude 提供，无需显式导入 moonbitlang/core/bigint

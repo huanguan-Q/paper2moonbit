@@ -2,6 +2,7 @@
 // (Owens-Reppy-Turon style simplification keeps the derivative state space finite).
 
 ///|
+#derive(Eq, Hash, @debug.Debug)
 pub enum Regex {
   REmpty
   REps
@@ -10,7 +11,7 @@ pub enum Regex {
   RUnion(Array[Regex])
   RConcat(Regex, Regex)
   RStar(Regex)
-} derive(Eq, Hash, @debug.Debug)
+}
 
 ///|
 pub extend Regex with Eq::{ equal, not_equal }

@@ -3,7 +3,7 @@
 ///|
 /// Decode a hex string; ":" separators are tolerated (RFC notation).
 pub fn hex_bytes(s : String) -> Array[Int32] {
-  let buf = StringBuilder::new()
+  let buf = StringBuilder()
   for ch in s {
     if ch != ':' && ch != ' ' {
       buf.write_char(ch)
@@ -38,7 +38,7 @@ fn hex_val(c : Int32) -> Int32 {
 ///|
 pub fn bytes_to_hex(bs : Array[Int32]) -> String {
   let digits = "0123456789abcdef"
-  let buf = StringBuilder::new()
+  let buf = StringBuilder()
   for b in bs {
     buf.write_char(digits.to_array()[b / 16])
     buf.write_char(digits.to_array()[b % 16])

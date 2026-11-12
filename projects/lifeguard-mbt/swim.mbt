@@ -4,11 +4,12 @@
 // millisecond parameters so the whole thing is deterministically testable.
 
 ///|
+#derive(Eq, @debug.Debug)
 pub(all) enum MemberState {
   Alive
   Suspect
   Failed
-} derive(Eq, @debug.Debug)
+}
 
 ///|
 pub extend MemberState with Eq::{ equal, not_equal }
@@ -16,6 +17,7 @@ pub extend MemberState with @debug.Debug::{ to_repr }
 
 ///|
 /// Protocol messages (paper Sections III/IV).
+#derive(Eq, @debug.Debug)
 pub(all) enum Msg {
   Ping(String, Int) // from, probe seq
   Ack(String, Int) // from, probe seq
@@ -24,7 +26,7 @@ pub(all) enum Msg {
   Suspect(String, UInt64, String) // about, incarnation, originator
   Alive(String, UInt64, String) // about, incarnation, originator
   Confirm(String, UInt64, String) // about, incarnation, originator
-} derive(Eq, @debug.Debug)
+}
 
 ///|
 pub extend Msg with Eq::{ equal, not_equal }

@@ -178,7 +178,7 @@ pub fn chacha20_encrypt(
   let n = plaintext.length()
   let mut j = 0
   while j * 64 < n {
-    let ks = chacha20_block(key, counter.add(j.to_uint()), nonce)
+    let ks = chacha20_block(key, counter.add(j.reinterpret_as_uint()), nonce)
     let start = j * 64
     let end = if start + 64 < n { start + 64 } else { n }
     let mut k = start

@@ -127,11 +127,11 @@ test "string API agrees with core over generated texts (T-STR)" {
   let rng = LCG::new(77)
   for trial in 0..<15 {
     let n = trial % 50 + 3
-    let buf = StringBuilder::new()
+    let buf = StringBuilder()
     for _ in 0..<n {
       // alphabet a..e
       let code = 97 + (rng.next_u64() % 5UL).to_int()
-      buf.write_char(Char::from_int(code))
+      buf.write_char(Int::unsafe_to_char(code))
     }
     let text = buf.to_string()
     let sa = suffix_array(text)

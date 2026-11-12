@@ -9,7 +9,7 @@ test "member property: assignment always inside the view (QC-MEMBER)" {
   @quickcheck.check(
     fn(n : Int) -> Bool {
       let buckets = if n < 0 { 1 } else { n % 32 + 1 }
-      let h = RangedHash::new(seed=0x9E37UL, points_per_bucket=8)
+      let h = @chash.RangedHash::new(seed=0x9E37UL, points_per_bucket=8)
       let mut b = 0
       while b < buckets {
         h.add_bucket(b)
@@ -31,14 +31,14 @@ test "smoothness property: adding a bucket only steals for itself (QC-SMOOTH)" {
   @quickcheck.check(
     fn(n : Int) -> Bool {
       let base = if n < 0 { 1 } else { n % 16 + 1 }
-      let h = RangedHash::new(seed=0xD1CEUL, points_per_bucket=8)
+      let h = @chash.RangedHash::new(seed=0xD1CEUL, points_per_bucket=8)
       let mut b = 0
       while b < base {
         h.add_bucket(b)
         b += 1
       }
       let items : Array[Int] = []
-      let rng = LCG::new(base.to_uint64() * 2654435761UL + 11UL)
+      let rng = @chash.LCG::new(base.to_uint64() * 2654435761UL + 11UL)
       for _ in 0..<200 {
         items.push((rng.next_u64() % 50000UL).to_int())
       }
