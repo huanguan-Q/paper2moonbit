@@ -11,6 +11,13 @@ Run it:
 sh scripts/backend_matrix.sh            # from the repo root
 ```
 
+Cell semantics: `PASS` = at least one test ran and all passed; `FAIL` = non-zero
+exit or a failing test; `N/A` = the target compiled but **zero tests ran**
+(`moon test` exits 0 with `Total tests: 0` when a package's `supported_targets`
+excludes the backend). `N/A` is counted as *not covered*, never as a pass — the
+script prints the uncovered cells after the verdict so a green matrix cannot hide
+an unexercised backend.
+
 ## Verified results (moon 0.1.20261104, 2026-11-09)
 
 | project | wasm | wasm-gc | js | native | judgments exercised |

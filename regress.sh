@@ -6,8 +6,29 @@
 # Purpose: after any moon toolchain upgrade, verify that all recipes still
 # hold — turns one-shot validation into continuous trust.
 set -u
+
+# Workspace: normalise to an absolute path up front. Each project is visited in
+# its own subshell, but normalising here also makes error messages unambiguous
+# and keeps a relative argument (".") working.
 WS="${1:-$(pwd)}"
+case "$WS" in
+  /*) ;;
+  *) WS="$(cd "$WS" 2>/dev/null && pwd)" || { echo "workspace not found: ${1:-$WS}" >&2; exit 2; } ;;
+esac
+[ -d "$WS" ] || { echo "workspace is not a directory: $WS" >&2; exit 2; }
+
 MOON_VER=$(moon version 2>&1 | head -1)
+
+# Private scratch dir. A fixed /tmp/reg_*.log path is a CWE-377 hazard: a
+# pre-created symlink or FIFO at that name is followed by the shell's ">"
+# redirection, which can clobber an unrelated file or capture build output.
+# mktemp -d gives an unpredictable, 0700 directory owned by this user.
+LOG_DIR=$(mktemp -d "${TMPDIR:-/tmp}/paper2moonbit-regress.XXXXXX") || {
+  echo "cannot create temp dir" >&2
+  exit 2
+}
+chmod 700 "$LOG_DIR"
+
 PROJECTS=(
   "projects/roaring-mbt"
   "projects/eliasfano-mbt"
@@ -27,6 +48,19 @@ PROJECTS=(
   "projects/sais-mbt"
   "projects/skiplist-mbt"
 )
+
+# Keep the logs only when something failed; on a green run the directory is
+# removed so no build output is left lying around on disk.
+cleanup() {
+  if [ "${overall:-1}" -eq 0 ] || [ -z "$(ls -A "$LOG_DIR" 2>/dev/null)" ]; then
+    rm -rf "$LOG_DIR"
+  else
+    echo
+    echo "logs kept in: $LOG_DIR"
+  fi
+}
+trap cleanup EXIT INT TERM
+
 echo "moon version: $MOON_VER"
 echo "workspace:    $WS"
 echo
@@ -39,19 +73,37 @@ for p in "${PROJECTS[@]}"; do
     overall=1
     continue
   fi
-  cd "$dir" || exit 1
+  # Every command runs in a subshell rooted at the project, so the loop's own
+  # working directory is never mutated (a bare `cd` here used to break every
+  # project after the first when the workspace argument was relative).
   # CHECK
-  if moon check >/tmp/reg_check.log 2>&1; then C=PASS; else C=FAIL; overall=1; fi
+  if ( cd "$dir" && moon check ) >"$LOG_DIR/check.log" 2>&1; then
+    C=PASS
+  else
+    C=FAIL; overall=1
+  fi
   # TEST
-  if moon test >/tmp/reg_test.log 2>&1; then T=PASS; else T=FAIL; overall=1; fi
+  if ( cd "$dir" && moon test ) >"$LOG_DIR/test.log" 2>&1; then
+    T=PASS
+  else
+    T=FAIL; overall=1
+  fi
   # PROVE: proofmodel package if present, else main package if proof-enabled
   # (no cache wipe: rm -rf on _build/verif trips the safe-delete guard; a
   # cached prove result is still a genuine pass)
   P="-"
-  if [ -d proofmodel ]; then
-    if moon prove proofmodel >/tmp/reg_prove.log 2>&1; then P=PASS; else P=FAIL; overall=1; fi
-  elif grep -q 'proof-enabled' moon.pkg 2>/dev/null || grep -q '^proof_enabled' moon.pkg 2>/dev/null; then
-    if moon prove . >/tmp/reg_prove.log 2>&1; then P=PASS; else P=FAIL; overall=1; fi
+  if [ -d "$dir/proofmodel" ]; then
+    if ( cd "$dir" && moon prove proofmodel ) >"$LOG_DIR/prove.log" 2>&1; then
+      P=PASS
+    else
+      P=FAIL; overall=1
+    fi
+  elif grep -q 'proof-enabled' "$dir/moon.pkg" 2>/dev/null || grep -q '^proof_enabled' "$dir/moon.pkg" 2>/dev/null; then
+    if ( cd "$dir" && moon prove . ) >"$LOG_DIR/prove.log" 2>&1; then
+      P=PASS
+    else
+      P=FAIL; overall=1
+    fi
   fi
   printf "%-30s %-8s %-8s %-8s\n" "$p" "$C" "$T" "$P"
 done
@@ -59,6 +111,6 @@ echo
 if [ "$overall" -eq 0 ]; then
   echo "OVERALL: ALL GREEN"
 else
-  echo "OVERALL: FAILURES PRESENT (see per-project logs in /tmp/reg_*.log)"
+  echo "OVERALL: FAILURES PRESENT"
 fi
 exit $overall
