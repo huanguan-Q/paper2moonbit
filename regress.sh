@@ -66,6 +66,7 @@ echo "workspace:    $WS"
 echo
 printf "%-30s %-8s %-8s %-8s\n" "PROJECT" "CHECK" "TEST" "PROVE"
 overall=0
+PROVE_ENV_FAIL=""
 for p in "${PROJECTS[@]}"; do
   dir="$WS/$p"
   if [ ! -f "$dir/moon.mod" ]; then
@@ -97,12 +98,23 @@ for p in "${PROJECTS[@]}"; do
       P=PASS
     else
       P=FAIL; overall=1
+      # `anomaly: Sys_error` means why3 could not perform a file operation
+      # (e.g. rotating why3session.xml / .bak), not that a goal failed. The
+      # proof may still hold; flag it so the summary can say how to clear it.
+      if grep -q "anomaly: Sys_error" "$LOG_DIR/prove.log"; then
+        P="FAIL*"
+        PROVE_ENV_FAIL="$PROVE_ENV_FAIL${PROVE_ENV_FAIL:+ }$p"
+      fi
     fi
   elif grep -q 'proof-enabled' "$dir/moon.pkg" 2>/dev/null || grep -q '^proof_enabled' "$dir/moon.pkg" 2>/dev/null; then
     if ( cd "$dir" && moon prove . ) >"$LOG_DIR/prove.log" 2>&1; then
       P=PASS
     else
       P=FAIL; overall=1
+      if grep -q "anomaly: Sys_error" "$LOG_DIR/prove.log"; then
+        P="FAIL*"
+        PROVE_ENV_FAIL="$PROVE_ENV_FAIL${PROVE_ENV_FAIL:+ }$p"
+      fi
     fi
   fi
   printf "%-30s %-8s %-8s %-8s\n" "$p" "$C" "$T" "$P"
@@ -112,5 +124,15 @@ if [ "$overall" -eq 0 ]; then
   echo "OVERALL: ALL GREEN"
 else
   echo "OVERALL: FAILURES PRESENT"
+fi
+if [ -n "$PROVE_ENV_FAIL" ]; then
+  echo
+  echo "* PROVE shows 'anomaly: Sys_error' for the package(s) below — that is a why3"
+  echo "  file-operation failure inside _build/verif (e.g. it could not rotate"
+  echo "  why3session.xml), not a goal that failed to prove. The proof may still"
+  echo "  hold. Clear the session cache and re-run:"
+  for p in $PROVE_ENV_FAIL; do
+    echo "    rm -rf \"$WS/$p/_build/verif/.why3harness\""
+  done
 fi
 exit $overall
