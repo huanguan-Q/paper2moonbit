@@ -39,6 +39,16 @@ jobs:
           done
           echo "FAILED PROJECTS:$FAILED" | tee /tmp/failed_projects.txt
           if [ -n "$FAILED" ]; then exit 1; fi
+      # repro/ holds the reproduction artifact (docs/REPRODUCE.md), which is
+      # deliberately NOT one of the 17 published packages, so the loop above
+      # never touches it. Without this step the evidence can rot silently.
+      - name: Reproduction artifact (repro/cms)
+        run: |
+          echo "::group::repro/cms"
+          cd repro/cms
+          moon check
+          moon test
+          echo "::endgroup::"
   backend-matrix:
     runs-on: ubuntu-latest
     strategy:
