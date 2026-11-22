@@ -38,7 +38,7 @@
 ### S7 质量门 + 发布
 - `moon fmt` → `moon check` 零警告 → `moon test` 全绿 → `moon prove` 契约达成
 - mooncakes 发布：description/keywords/license/readme 完整；409 冲突 bump 版本
-- 合规三查（见 COMPLIANCE.md）
+- 合规三查：思想/表达二分自查、源许可核查、RFC 版权注记
 
 ## 2. 判据哲学
 
@@ -83,5 +83,5 @@
 - spec-first：测试文件先于实现文件生成
 - API 不确定 → 探针文件批量验证（一次 `moon check` 试多个候选名）
 - Python 参考实现镜像：复杂算法先在 Python 验证逻辑再机械翻译（第 20 轮 SA-IS）
-- 合规三查：思想/表达二分自查、源许可核查、RFC 版权注记（详见 COMPLIANCE.md）
+- 合规三查：思想/表达二分自查、源许可核查、RFC 版权注记
 - 工具链升级协议：regress.sh 全量 + moonprobe 边界重标定
