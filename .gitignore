@@ -1,25 +1,28 @@
+# ─── 构建与依赖 ───
 target/
 _build/
 .mooncakes/
 *.core
-.DS_Store
 *.mi
 *.o
+
+# ─── 第三方论文 / 大文件(版权与体积) ───
 paper/
 content.md
 *.pdf
 
-HACKATHON_PLAYBOOK.md
-APPLICATION*.md
-COMMUNITY_POST*.md
-COMPLIANCE*.md
-EVOLUTION*.md
-MMV*.md
-HACKATHON_PLAYBOOK-local.md
-APPLICATION-local.md
-COMMUNITY_POST-local.md
-COMPLIANCE-local.md
-EVOLUTION-local.md
-MMV_AUDIT-local.md
-MMV_DIAGNOSIS-local.md
+# ─── 系统与编辑器残留 ───
+.DS_Store
+.claude/
+__pycache__/
+*.log
+
+# ─── 私人资料:根目录只放行 README.md,其余 md 一律不入库 ───
+# (具体文档名不在此列举——列举清单本身会泄露"作者认为什么敏感")
+/*.md
+!/README.md
 *-local.md
+*-local*
+
+# 守卫的本地私有关键词清单(不入库)
+.githooks/private-patterns.local.txt

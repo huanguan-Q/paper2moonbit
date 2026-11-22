@@ -8,11 +8,23 @@ while IFS= read -r f; do
   case "$f" in
     projects/*|docs/*|skill/*|tooling/*|scripts/*|.github/*|repro/*|\
     README.md|LICENSE|regress.sh|.gitignore|.githooks/*)
+      # 通用 deny 模式(不列举具体私人文档名——列举清单本身会泄露"什么算敏感")
       case "$f" in
         *-local*|*paper/*|*content.md|*.pdf|*.DS_Store|*.mooncakes/*|*target/*|*_build/*|\
-        *EVOLUTION*|*MMV_*|*COMPLIANCE*|*APPLICATION*|*HACKATHON_PLAYBOOK*|*COMMUNITY_POST*|*.ipynb|*.claude/*)
+        *.ipynb|*.claude/*|*.env|*.pem|*.key)
           echo "DENY (denylist): $f"; fail=1 ;;
       esac
+      # 本地私有清单(不入库;文件存在才生效,clone 后无此文件也能正常用)
+      LOCAL_PAT_FILE="$(dirname "$0")/private-patterns.local.txt"
+      if [ -f "$LOCAL_PAT_FILE" ] && [ "$fail" -eq 0 ]; then
+        while IFS= read -r pat; do
+          case "$pat" in ''|'#'*) continue ;; esac
+          # shellcheck disable=SC2254
+          case "$f" in
+            $pat) echo "DENY (local private list): $f"; fail=1 ;;
+          esac
+        done < "$LOCAL_PAT_FILE"
+      fi
       ;;
     *)
       echo "DENY (not in allowlist): $f"; fail=1 ;;
